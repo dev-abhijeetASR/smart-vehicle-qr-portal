@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Contact Portal</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --border: #334155;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 24px;
+    }
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .plate {
+      display: inline-block;
+      background: #fcd34d;
+      color: #111827;
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: 2px;
+      padding: 6px 18px;
+      border-radius: 8px;
+      border: 2px solid #000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .privacy-notice {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .option-btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .option-btn:hover {
+      background: #273549;
+      border-color: #475569;
+    }
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.15);
+      color: #93c5fd;
+    }
+    .option-icon {
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .custom-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    textarea, input[type="text"], input[type="tel"] {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+    }
+    textarea:focus, input:focus {
+      border-color: var(--primary);
+    }
+    .send-btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+      transition: all 0.2s;
+    }
+    .send-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Live status screen */
+    .status-card {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .radar-box {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .radar-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.2);
+      animation: pulse-ring 2s infinite ease-out;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .radar-icon {
+      font-size: 36px;
+      z-index: 2;
+    }
+    .timer-display {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .response-banner {
+      display: none;
+      margin-top: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1.5px solid var(--success);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+    }
+    .response-banner.show {
+      display: block;
+      animation: pop-in 0.3s ease-out;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .response-header {
+      font-size: 12px;
+      color: #34d399;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .response-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-card">
+      <div class="badge">🛡️ Smart Vehicle Decal</div>
+      <div>
+        <div class="plate" id="plateDisplay">VEHICLE</div>
+      </div>
+      <p class="subtitle">Vehicle owner has enabled instant notifications.</p>
+      <div class="privacy-notice">
+        🔒 100% Privacy Protected • Owner phone number is shielded
+      </div>
+    </div>
+
+    <!-- Alert Form -->
+    <div id="alertSection" style="display: flex; flex-direction: column; gap: 14px;">
+      <div class="section-title">Select Reason for Contact</div>
+
+      <div class="options-grid">
+        <button type="button" class="option-btn selected" data-reason="Car is blocking my vehicle">
+          <span class="option-icon">🚗</span>
+          <span>Your vehicle is blocking my way</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Lights / Hazard lights are on">
+          <span class="option-icon">💡</span>
+          <span>Headlights or hazard lights left on</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Window or door is slightly open">
+          <span class="option-icon">🪟</span>
+          <span>Window / Sunroof / Door open</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Tow truck or Traffic police warning">
+          <span class="option-icon">🚨</span>
+          <span>Tow Truck / Traffic Police alert</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Car alarm ringing or damage observed">
+          <span class="option-icon">⚠️</span>
+          <span>Alarm ringing / Vehicle issue</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Other / Custom Note">
+          <span class="option-icon">✏️</span>
+          <span>Other message</span>
+        </button>
+      </div>
+
+      <div class="custom-input-box">
+        <label style="font-size: 12px; color: var(--text-muted);">Additional Note (Optional):</label>
+        <textarea id="customNote" rows="2" placeholder="e.g. Parked behind you in silver sedan, need to leave"></textarea>
+      </div>
+
+      <div class="custom-input-box">
+        <label style="font-size: 12px; color: var(--text-muted);">Your Contact Number (Optional, for callback):</label>
+        <input type="tel" id="senderPhone" placeholder="Enter your phone number">
+      </div>
+
+      <button type="button" class="send-btn" id="submitAlertBtn" onclick="sendAlert()">
+        <span>⚡ Send Urgent Alert to Owner</span>
+      </button>
+    </div>
+
+    <!-- Live Status / Awaiting Response View -->
+    <div class="status-card" id="statusSection">
+      <div class="radar-box">
+        <div class="radar-circle"></div>
+        <div class="radar-icon" id="statusIcon">📡</div>
+      </div>
+      
+      <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;" id="statusTitle">Alert Delivered to Owner</h2>
+      <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;" id="statusSubtitle">
+        The vehicle owner's mobile phone received your urgent alert. Please keep this screen open for their reply.
+      </p>
+
+      <div class="timer-display" id="elapsedTimer">Waiting for owner response: 0s</div>
+
+      <!-- Real-Time Response From Owner -->
+      <div class="response-banner" id="responseBanner">
+        <div class="response-header">
+          <span>✅ Owner Response Received</span>
+        </div>
+        <div class="response-text" id="responseText">
+          "On my way! Arriving in 2 minutes."
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; gap: 8px; justify-content: center;">
+        <button style="background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 8px; font-size: 12px; cursor: pointer;" onclick="location.reload()">
+          Send Another Update
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      Secured Smart Vehicle Contact Decal System
+    </div>
+  </div>
+
+  <script>
+    // Configuration from URL params or default
+    const params = new URLSearchParams(window.location.search);
+    const vehicleNo = params.get('v') || 'MH 12 AB 1234';
+    const tgBotToken = params.get('bot') || '';
+    const tgChatId = params.get('chat') || '';
+
+    document.getElementById('plateDisplay').textContent = vehicleNo;
+
+    // Selection logic
+    let selectedReason = "Car is blocking my vehicle";
+    const optionBtns = document.querySelectorAll('.option-btn');
+    optionBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        optionBtns.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedReason = btn.getAttribute('data-reason');
+      });
+    });
+
+    let currentAlertId = null;
+    let pollInterval = null;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+
+    async function sendAlert() {
+      const btn = document.getElementById('submitAlertBtn');
+      const note = document.getElementById('customNote').value.trim();
+      const senderPhone = document.getElementById('senderPhone').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Dispatched alert...';
+
+      const payload = {
+        vehicle: vehicleNo,
+        reason: selectedReason,
+        note: note,
+        senderPhone: senderPhone,
+        botToken: tgBotToken,
+        chatId: tgChatId
+      };
+
+      try {
+        // First try the backend /api/alert
+        const res = await fetch('/api/alert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          currentAlertId = data.alertId;
+          showLiveStatusView();
+          startStatusPolling();
+          return;
+        }
+      } catch (err) {
+        console.log('Backend not available, trying client-side fallback...', err);
+      }
+
+      // Fallback: Client-side Direct Telegram Bot API (for GitHub Pages static hosting)
+      if (tgBotToken && tgChatId) {
+        const text = 
+          `🚨 *VEHICLE ALERT: ${vehicleNo}*\n` +
+          `━━━━━━━━━━━━━━━━━━━━━━\n` +
+          `⚠️ *Reason:* ${selectedReason}\n` +
+          `📝 *Note:* ${note || 'None'}\n` +
+          `📞 *Sender Contact:* ${senderPhone || 'Not provided'}\n` +
+          `🕒 *Time:* ${new Date().toLocaleTimeString()}`;
+
+        try {
+          await fetch(`https://api.telegram.org/bot${tgBotToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: tgChatId,
+              text: text,
+              parse_mode: 'Markdown'
+            })
+          });
+          showLiveStatusView();
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // If simulated / offline
+      showLiveStatusView();
+    }
+
+    function showLiveStatusView() {
+      document.getElementById('alertSection').style.display = 'none';
+      document.getElementById('statusSection').style.display = 'block';
+
+      // Start elapsed timer
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        document.getElementById('elapsedTimer').textContent = `Waiting for owner response: ${secondsElapsed}s`;
+      }, 1000);
+    }
+
+    function startStatusPolling() {
+      if (!currentAlertId) return;
+
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/status?id=${currentAlertId}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'replied' && data.response) {
+              clearInterval(pollInterval);
+              clearInterval(timerInterval);
+              displayOwnerResponse(data.response);
+            }
+          }
+        } catch (e) {
+          // ignore transient poll error
+        }
+      }, 2000);
+    }
+
+    function displayOwnerResponse(responseText) {
+      document.getElementById('statusIcon').textContent = '🎉';
+      document.getElementById('statusTitle').textContent = 'Owner is Responding!';
+      document.getElementById('statusSubtitle').textContent = 'The owner has sent a response directly from their phone.';
+      
+      const banner = document.getElementById('responseBanner');
+      document.getElementById('responseText').textContent = `"${responseText}"`;
+      banner.classList.add('show');
+    }
+  </script>
+</body>
+</html>

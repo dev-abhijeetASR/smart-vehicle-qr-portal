@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Vehicle QR Decal Studio</title>
+  <script src="qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #131b2e;
+      --border: #23314e;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      font-size: 26px;
+      background: #1e293b;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge-diy {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .main-layout {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+    @media (max-width: 1024px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .control-pane {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .preview-pane {
+      padding: 32px;
+      background: #060911;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      overflow-y: auto;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+    input, select, textarea {
+      background: #0b0f19;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+    }
+    .theme-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .theme-card {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .theme-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .theme-swatch {
+      height: 24px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    /* Sticker Decal Visual Design */
+    .sticker-container {
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      border-radius: 14px;
+      transition: all 0.3s;
+    }
+    .sticker-decal {
+      width: 320px;
+      height: 320px;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    /* Themes */
+    .theme-hsrp {
+      background: #fcd34d;
+      color: #000;
+      border: 4px solid #000;
+    }
+    .theme-hsrp .plate-box {
+      background: #000;
+      color: #fcd34d;
+    }
+    .theme-dark {
+      background: #0f172a;
+      color: #f8fafc;
+      border: 4px solid #3b82f6;
+    }
+    .theme-dark .plate-box {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .theme-white {
+      background: #ffffff;
+      color: #111827;
+      border: 4px solid #111827;
+    }
+    .theme-white .plate-box {
+      background: #111827;
+      color: #fff;
+    }
+    .theme-red {
+      background: #dc2626;
+      color: #ffffff;
+      border: 4px solid #ffffff;
+    }
+    .theme-red .plate-box {
+      background: #ffffff;
+      color: #dc2626;
+    }
+
+    .sticker-header {
+      text-align: center;
+      width: 100%;
+    }
+    .sticker-title {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .sticker-sub {
+      font-size: 9.5px;
+      font-weight: 700;
+      opacity: 0.85;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    .qr-frame {
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .plate-box {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 4px 14px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sticker-footer {
+      font-size: 8.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0.9;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 440px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: #273549;
+    }
+    .btn-success {
+      background: #059669;
+      color: #fff;
+    }
+    .btn-success:hover {
+      background: #047857;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      header, .control-pane, .action-row, .guide-card, .test-feedback {
+        display: none !important;
+      }
+      .main-layout {
+        display: block !important;
+      }
+      .preview-pane {
+        background: transparent !important;
+        padding: 0 !important;
+      }
+      .sticker-container {
+        box-shadow: none !important;
+      }
+      .sticker-decal {
+        page-break-inside: avoid;
+        margin: 20px auto;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    .guide-card {
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .guide-card h4 {
+      color: #60a5fa;
+      font-size: 13px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .test-feedback {
+      display: none;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+    .test-feedback.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .test-feedback.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-icon">🚗</span>
+      <div>
+        <div class="brand-title">Smart Vehicle QR Decal Studio</div>
+        <div class="brand-sub">Method 2: 100% Privacy Protected Contact Portal</div>
+      </div>
+    </div>
+    <div class="badge-diy">🛡️ Privacy Shield Active</div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Controls Pane -->
+    <div class="control-pane">
+      <div class="form-group">
+        <label>1. Vehicle Registration Plate</label>
+        <input type="text" id="vehicleInput" value="DL 01 AB 1234" placeholder="e.g. MH 02 CD 5678" oninput="updateSticker()">
+      </div>
+
+      <!-- Telegram Bot Configuration -->
+      <div class="guide-card">
+        <h4>⚡ 60-Second Telegram Bot Setup (Free Forever)</h4>
+        <ol style="margin-left: 18px; display: flex; flex-direction: column; gap: 4px; color: #cbd5e1;">
+          <li>Open Telegram, message <strong>@BotFather</strong>, send <code>/newbot</code>, copy the <strong>HTTP API Token</strong>.</li>
+          <li>Message <strong>@userinfobot</strong> on Telegram to get your numeric <strong>Id</strong>.</li>
+          <li>Send <code>/start</code> to your newly created bot, then paste your credentials below:</li>
+        </ol>
+      </div>
+
+      <div class="form-group">
+        <label>Telegram Bot Token</label>
+        <input type="text" id="tgBotToken" placeholder="e.g. 7123456789:AAH..." oninput="updateSticker()">
+      </div>
+
+      <div class="form-group">
+        <label>Telegram Chat ID</label>
+        <input type="text" id="tgChatId" placeholder="e.g. 123456789" oninput="updateSticker()">
+      </div>
+
+      <button type="button" class="btn btn-secondary" onclick="testTelegramBot()" id="testBotBtn" style="width: 100%;">
+        🔔 Send Test Alert to My Phone
+      </button>
+      <div class="test-feedback" id="testFeedback"></div>
+
+      <!-- Portal Hosting URL -->
+      <div class="form-group">
+        <label>Portal Base URL</label>
+        <input type="text" id="portalBaseUrl" value="scanner-portal.html" placeholder="https://yourdomain.com/scanner-portal.html" oninput="updateSticker()">
+        <span style="font-size: 11px; color: var(--muted);">
+          When deployed on Vercel or GitHub Pages, paste your full URL here (e.g., <code>https://my-car.vercel.app/scanner-portal.html</code>).
+        </span>
+      </div>
+
+      <!-- Theme & Styling -->
+      <div class="form-group">
+        <label>2. Decal Theme & Visibility</label>
+        <div class="theme-picker">
+          <div class="theme-card active" id="th-hsrp" onclick="setTheme('hsrp')">
+            <div class="theme-swatch" style="background: #fcd34d; border: 1px solid #000;"></div>
+            Caution Yellow
+          </div>
+          <div class="theme-card" id="th-dark" onclick="setTheme('dark')">
+            <div class="theme-swatch" style="background: #0f172a; border: 1px solid #3b82f6;"></div>
+            Stealth Dark
+          </div>
+          <div class="theme-card" id="th-white" onclick="setTheme('white')">
+            <div class="theme-swatch" style="background: #ffffff; border: 1px solid #94a3b8;"></div>
+            Clean White
+          </div>
+          <div class="theme-card" id="th-red" onclick="setTheme('red')">
+            <div class="theme-swatch" style="background: #dc2626; border: 1px solid #fff;"></div>
+            Alert Red
+          </div>
+        </div>
+      </div>
+
+      <!-- Decal Text Customization -->
+      <div class="form-group">
+        <label>Header Text</label>
+        <input type="text" id="headerTextInput" value="PARKED SMART • EMERGENCY CONTACT" oninput="updateSticker()">
+      </div>
+      <div class="form-group">
+        <label>Subheader Text</label>
+        <input type="text" id="subHeaderTextInput" value="SCAN QR CODE IF BLOCKING OR IN EMERGENCY" oninput="updateSticker()">
+      </div>
+    </div>
+
+    <!-- Live Preview Pane -->
+    <div class="preview-pane">
+      <div class="sticker-container">
+        <div class="sticker-decal theme-hsrp" id="decalBox">
+          <div class="sticker-header">
+            <div class="sticker-title" id="previewTitle">PARKED SMART • EMERGENCY CONTACT</div>
+            <div class="sticker-sub" id="previewSub">SCAN QR CODE IF BLOCKING OR IN EMERGENCY</div>
+          </div>
+
+          <div class="qr-frame">
+            <div id="qrcode"></div>
+          </div>
+
+          <div class="plate-box">
+            <span>🇮🇳</span>
+            <span id="previewPlate">DL 01 AB 1234</span>
+          </div>
+
+          <div class="sticker-footer">
+            <span>🔒 100% PRIVACY PROTECTED</span>
+            <span>•</span>
+            <span>⚡ INSTANT CONTACT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="btn btn-primary" onclick="window.print()">
+          🖨️ Print Decal Sticker
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="testQrScan()">
+          📱 Open Scanner Portal
+        </button>
+      </div>
+
+      <div style="font-size: 12px; color: var(--muted); text-align: center; max-width: 440px; line-height: 1.5;">
+        💡 <strong>Print Spec:</strong> Standard windshield size is <strong>75 mm × 75 mm (3" × 3")</strong>. Print on clear transparent vinyl film (reverse/mirror print) to adhere to the inside of your windshield glass.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTheme = 'hsrp';
+    let qrcodeObj = null;
+
+    function setTheme(theme) {
+      currentTheme = theme;
+      ['hsrp', 'dark', 'white', 'red'].forEach(t => {
+        document.getElementById('th-' + t).classList.toggle('active', t === theme);
+      });
+      const decal = document.getElementById('decalBox');
+      decal.className = `sticker-decal theme-${theme}`;
+      updateSticker();
+    }
+
+    function generateTargetUrl() {
+      const vehicle = document.getElementById('vehicleInput').value.trim() || 'VEHICLE';
+      let base = document.getElementById('portalBaseUrl').value.trim() || 'scanner-portal.html';
+      const bot = document.getElementById('tgBotToken').value.trim();
+      const chat = document.getElementById('tgChatId').value.trim();
+      
+      const separator = base.includes('?') ? '&' : '?';
+      let url = `${base}${separator}v=${encodeURIComponent(vehicle)}`;
+      if (bot) url += `&bot=${encodeURIComponent(bot)}`;
+      if (chat) url += `&chat=${encodeURIComponent(chat)}`;
+      return url;
+    }
+
+    function updateSticker() {
+      const vehicle = document.getElementById('vehicleInput').value.trim() || 'DL 01 AB 1234';
+      const title = document.getElementById('headerTextInput').value;
+      const sub = document.getElementById('subHeaderTextInput').value;
+
+      document.getElementById('previewPlate').textContent = vehicle;
+      document.getElementById('previewTitle').textContent = title;
+      document.getElementById('previewSub').textContent = sub;
+
+      const targetUrl = generateTargetUrl();
+
+      // Render QR code
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      qrcodeObj = new QRCode(qrContainer, {
+        text: targetUrl,
+        width: 140,
+        height: 140,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    async function testTelegramBot() {
+      const botToken = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+      const feedback = document.getElementById('testFeedback');
+      const btn = document.getElementById('testBotBtn');
+
+      if (!botToken || !chatId) {
+        feedback.className = 'test-feedback error';
+        feedback.textContent = '❌ Please enter both Bot Token and Chat ID above.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Sending test alert...';
+
+      try {
+        // Try backend test route first
+        let res = await fetch('/api/test-bot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ botToken, chatId })
+        });
+
+        if (!res.ok) {
+          // Direct fallback to Telegram API
+          const testMsg = `🎉 *Smart Vehicle QR Portal Connected!*\n\nTest notification sent to your phone.`;
+          res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text: testMsg, parse_mode: 'Markdown' })
+          });
+        }
+
+        const data = await res.json();
+        if (res.ok || data.ok) {
+          feedback.className = 'test-feedback success';
+          feedback.textContent = '✅ Success! Test alert received on your Telegram app.';
+        } else {
+          feedback.className = 'test-feedback error';
+          feedback.textContent = `❌ Telegram Error: ${data.error || data.description || 'Failed to send'}`;
+        }
+      } catch (err) {
+        feedback.className = 'test-feedback error';
+        feedback.textContent = `❌ Network Error: Could not reach Telegram. Check internet connection.`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔔 Send Test Alert to My Phone';
+      }
+    }
+
+    function testQrScan() {
+      const targetUrl = generateTargetUrl();
+      window.open(targetUrl, '_blank');
+    }
+
+    // Auto-detect current host if running via node server
+    window.onload = function() {
+      if (window.location.protocol.startsWith('http')) {
+        document.getElementById('portalBaseUrl').value = `${window.location.origin}/scanner-portal.html`;
+      }
+      updateSticker();
+    };
+  </script>
+</body>
+</html>
