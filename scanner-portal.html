@@ -361,13 +361,33 @@
   </div>
 
   <script>
-    // Configuration from URL params or default
+    // Configuration from URL params or localStorage
     const params = new URLSearchParams(window.location.search);
-    const vehicleNo = params.get('v') || 'MH 12 AB 1234';
-    const tgBotToken = params.get('bot') || '';
-    const tgChatId = params.get('chat') || '';
+    let vehicleNo = params.get('v') || localStorage.getItem('vqr_vehicle') || 'MH 14 ML 3751';
+    let tgBotToken = params.get('bot') || localStorage.getItem('vqr_bot') || '';
+    let tgChatId = params.get('chat') || localStorage.getItem('vqr_chat') || '';
+
+    // Cache in localStorage if present in URL
+    if (params.get('v')) localStorage.setItem('vqr_vehicle', params.get('v'));
+    if (params.get('bot')) localStorage.setItem('vqr_bot', params.get('bot'));
+    if (params.get('chat')) localStorage.setItem('vqr_chat', params.get('chat'));
 
     document.getElementById('plateDisplay').textContent = vehicleNo;
+
+    // Show warning if credentials missing
+    if (!tgBotToken || !tgChatId) {
+      console.warn('Vehicle Portal: No Telegram credentials found in URL or cache.');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
     // Selection logic
     let selectedReason = "Car is blocking my vehicle";
@@ -390,20 +410,26 @@
       const note = document.getElementById('customNote').value.trim();
       const senderPhone = document.getElementById('senderPhone').value.trim();
 
+      // Check if credentials exist
+      if (!tgBotToken || !tgChatId) {
+        alert('⚠️ Unable to deliver alert: This portal was opened without vehicle credentials.\n\nPlease scan the QR code from the vehicle sticker again.');
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = '⏳ Dispatched alert...';
 
-      const payload = {
-        vehicle: vehicleNo,
-        reason: selectedReason,
-        note: note,
-        senderPhone: senderPhone,
-        botToken: tgBotToken,
-        chatId: tgChatId
-      };
-
+      // 1. Try serverless / backend if available
       try {
-        // First try the backend /api/alert
+        const payload = {
+          vehicle: vehicleNo,
+          reason: selectedReason,
+          note: note,
+          senderPhone: senderPhone,
+          botToken: tgBotToken,
+          chatId: tgChatId
+        };
+
         const res = await fetch('/api/alert', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -418,38 +444,44 @@
           return;
         }
       } catch (err) {
-        console.log('Backend not available, trying client-side fallback...', err);
+        // Backend not found (e.g. GitHub Pages static) - continue to direct Telegram API
       }
 
-      // Fallback: Client-side Direct Telegram Bot API (for GitHub Pages static hosting)
-      if (tgBotToken && tgChatId) {
-        const text = 
-          `🚨 *VEHICLE ALERT: ${vehicleNo}*\n` +
-          `━━━━━━━━━━━━━━━━━━━━━━\n` +
-          `⚠️ *Reason:* ${selectedReason}\n` +
-          `📝 *Note:* ${note || 'None'}\n` +
-          `📞 *Sender Contact:* ${senderPhone || 'Not provided'}\n` +
-          `🕒 *Time:* ${new Date().toLocaleTimeString()}`;
+      // 2. Direct Telegram API fallback (Reliable HTML parse_mode)
+      const htmlText = 
+        `🚨 <b>SMART VEHICLE ALERT: ${escapeHtml(vehicleNo)}</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `⚠️ <b>Reason:</b> ${escapeHtml(selectedReason)}\n` +
+        `📝 <b>Note:</b> ${escapeHtml(note || 'None')}\n` +
+        `📞 <b>Sender Contact:</b> ${escapeHtml(senderPhone || 'Not provided')}\n` +
+        `🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🔒 Sent via Smart Vehicle Privacy Portal`;
 
-        try {
-          await fetch(`https://api.telegram.org/bot${tgBotToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: tgChatId,
-              text: text,
-              parse_mode: 'Markdown'
-            })
-          });
+      try {
+        const resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: tgChatId,
+            text: htmlText,
+            parse_mode: 'HTML'
+          })
+        });
+
+        const data = await resp.json();
+        if (data.ok) {
           showLiveStatusView();
-          return;
-        } catch (e) {
-          console.error(e);
+        } else {
+          btn.disabled = false;
+          btn.textContent = '⚡ Send Urgent Alert to Owner';
+          alert(`❌ Telegram Delivery Failed: ${data.description || 'Unknown error'}\n\nPlease check your Telegram bot settings.`);
         }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = '⚡ Send Urgent Alert to Owner';
+        alert(`❌ Network Connection Error: Could not reach Telegram servers. Please check your internet connection.`);
       }
-
-      // If simulated / offline
-      showLiveStatusView();
     }
 
     function showLiveStatusView() {
