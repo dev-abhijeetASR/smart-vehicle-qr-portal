@@ -365,7 +365,7 @@
     const params = new URLSearchParams(window.location.search);
     let vehicleNo = params.get('v') || localStorage.getItem('vqr_vehicle') || 'MH 14 ML 3751';
     let tgBotToken = params.get('bot') || localStorage.getItem('vqr_bot') || '';
-    let tgChatId = params.get('chat') || localStorage.getItem('vqr_chat') || '';
+    let tgChatId = params.get('chat') || localStorage.getItem('vqr_chat') || '790475932';
 
     // Cache in localStorage if present in URL
     if (params.get('v')) localStorage.setItem('vqr_vehicle', params.get('v'));
