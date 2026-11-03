@@ -388,22 +388,25 @@
 
       <!-- Telegram Bot Configuration -->
       <div class="guide-card">
-        <h4>⚡ 60-Second Telegram Bot Setup (Free Forever)</h4>
+        <h4>⚡ Where to Find Your Telegram Credentials</h4>
         <ol style="margin-left: 18px; display: flex; flex-direction: column; gap: 4px; color: #cbd5e1;">
-          <li>Open Telegram, message <strong>@BotFather</strong>, send <code>/newbot</code>, copy the <strong>HTTP API Token</strong>.</li>
-          <li>Message <strong>@userinfobot</strong> on Telegram to get your numeric <strong>Id</strong>.</li>
-          <li>Send <code>/start</code> to your newly created bot, then paste your credentials below:</li>
+          <li>In Telegram, open <strong>@BotFather</strong>.</li>
+          <li>Look at the message where it says <em>"Use this token to access the HTTP API:"</em></li>
+          <li>Copy the <strong>long token</strong> (looks like <code>7912345678:AAHk_...</code>), <strong>NOT</strong> the username (@...).</li>
+          <li>Message <strong>@userinfobot</strong> to get your numeric Chat <strong>Id</strong>.</li>
+          <li>Make sure you sent <code>/start</code> to your bot!</li>
         </ol>
       </div>
 
       <div class="form-group">
-        <label>Telegram Bot Token</label>
-        <input type="text" id="tgBotToken" placeholder="e.g. 7123456789:AAH..." oninput="updateSticker()">
+        <label>Telegram Bot HTTP API Token (Numbers : Letters)</label>
+        <input type="text" id="tgBotToken" placeholder="e.g. 7912345678:AAHk_9zXy123..." oninput="validateAndNotify()">
+        <span id="tokenWarning" style="display:none; font-size:11px; color:#f87171; margin-top:2px;"></span>
       </div>
 
       <div class="form-group">
-        <label>Telegram Chat ID</label>
-        <input type="text" id="tgChatId" placeholder="e.g. 123456789" oninput="updateSticker()">
+        <label>Telegram Chat ID (Your Numeric ID)</label>
+        <input type="text" id="tgChatId" placeholder="e.g. 790475932" oninput="updateSticker()">
       </div>
 
       <button type="button" class="btn btn-secondary" onclick="testTelegramBot()" id="testBotBtn" style="width: 100%;">
@@ -546,6 +549,18 @@
       });
     }
 
+    function validateAndNotify() {
+      const val = document.getElementById('tgBotToken').value.trim();
+      const warning = document.getElementById('tokenWarning');
+      if (val.startsWith('@') || (val.length > 0 && !val.includes(':'))) {
+        warning.style.display = 'block';
+        warning.innerHTML = '⚠️ <strong>That is a bot username.</strong> Please paste the HTTP API Token from @BotFather (it looks like: <code>7912345678:AAHk...</code>).';
+      } else {
+        warning.style.display = 'none';
+      }
+      updateSticker();
+    }
+
     async function testTelegramBot() {
       const botToken = document.getElementById('tgBotToken').value.trim();
       const chatId = document.getElementById('tgChatId').value.trim();
@@ -558,38 +573,35 @@
         return;
       }
 
+      if (botToken.startsWith('@') || !botToken.includes(':')) {
+        feedback.className = 'test-feedback error';
+        feedback.innerHTML = '⚠️ <strong>Invalid Token Format:</strong> You entered a bot username (<code>' + botToken + '</code>). Please open <strong>@BotFather</strong> and copy the token that looks like <code>7912345678:AAHk_...</code>';
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = '⏳ Sending test alert...';
 
       try {
-        // Try backend test route first
-        let res = await fetch('/api/test-bot', {
+        const testMsg = `🎉 *Smart Vehicle QR Portal Connected!*\n━━━━━━━━━━━━━━━━━━━━━━\n✅ Test alert successfully received on your phone.\n🚗 Vehicle: ${document.getElementById('vehicleInput').value}\n🕒 Time: ${new Date().toLocaleTimeString()}`;
+
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ botToken, chatId })
+          body: JSON.stringify({ chat_id: chatId, text: testMsg, parse_mode: 'Markdown' })
         });
 
-        if (!res.ok) {
-          // Direct fallback to Telegram API
-          const testMsg = `🎉 *Smart Vehicle QR Portal Connected!*\n\nTest notification sent to your phone.`;
-          res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: chatId, text: testMsg, parse_mode: 'Markdown' })
-          });
-        }
-
         const data = await res.json();
-        if (res.ok || data.ok) {
+        if (data.ok) {
           feedback.className = 'test-feedback success';
           feedback.textContent = '✅ Success! Test alert received on your Telegram app.';
         } else {
           feedback.className = 'test-feedback error';
-          feedback.textContent = `❌ Telegram Error: ${data.error || data.description || 'Failed to send'}`;
+          feedback.textContent = `❌ Telegram Error: ${data.description || 'Failed to send'}`;
         }
       } catch (err) {
         feedback.className = 'test-feedback error';
-        feedback.textContent = `❌ Network Error: Could not reach Telegram. Check internet connection.`;
+        feedback.textContent = `❌ Network Error: Could not reach Telegram API. Verify token and internet connection.`;
       } finally {
         btn.disabled = false;
         btn.textContent = '🔔 Send Test Alert to My Phone';
@@ -601,10 +613,11 @@
       window.open(targetUrl, '_blank');
     }
 
-    // Auto-detect current host if running via node server
+    // Auto-detect current host and subpath if running via node server or GitHub Pages
     window.onload = function() {
       if (window.location.protocol.startsWith('http')) {
-        document.getElementById('portalBaseUrl').value = `${window.location.origin}/scanner-portal.html`;
+        const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        document.getElementById('portalBaseUrl').value = `${window.location.origin}${basePath}scanner-portal.html`;
       }
       updateSticker();
     };
