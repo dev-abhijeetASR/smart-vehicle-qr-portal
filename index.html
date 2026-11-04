@@ -526,6 +526,14 @@
           <input type="text" id="tgChatId" value="790475932" placeholder="e.g. 790475932" oninput="updateSticker()">
         </div>
 
+        <div class="form-group" style="margin-top: 14px;">
+          <label>Telegram Call Username (Direct Private Calling)</label>
+          <input type="text" id="tgUsername" value="saambsadashiv_108" placeholder="e.g. saambsadashiv_108" oninput="updateSticker()">
+          <span style="font-size: 11px; color: #a7f3d0;">
+            📞 Enables <strong>"Direct Private Call"</strong> on your portal. Finder can call your Telegram handle directly without seeing your phone number.
+          </span>
+        </div>
+
         <button type="button" class="btn btn-secondary" onclick="testTelegramBot()" id="testBotBtn" style="width: 100%;">
           🔔 Send Test Alert to My Phone
         </button>
@@ -636,7 +644,7 @@
           <div class="sticker-footer" id="previewFooter">
             <span>🔒 100% PRIVACY PROTECTED</span>
             <span>•</span>
-            <span>⚡ INSTANT CONTACT</span>
+            <span>📞 PRIVATE CALL ENABLED</span>
           </div>
         </div>
       </div>
@@ -692,7 +700,7 @@
         footer.innerHTML = '<span>💬 WHATSAPP DIRECT CONTACT</span><span>•</span><span>⚡ 1-TAP CHAT</span>';
         document.getElementById('testScanBtn').textContent = '📱 Test WhatsApp Link';
       } else {
-        footer.innerHTML = '<span>🔒 100% PRIVACY PROTECTED</span><span>•</span><span>⚡ INSTANT CONTACT</span>';
+        footer.innerHTML = '<span>🔒 100% PRIVACY PROTECTED</span><span>•</span><span>📞 PRIVATE CALL ENABLED</span>';
         document.getElementById('testScanBtn').textContent = '📱 Test Scanner';
       }
 
@@ -734,6 +742,8 @@
       let url = `${base}${separator}v=${encodeURIComponent(vehicle)}`;
       if (bot) url += `&bot=${encodeURIComponent(bot)}`;
       if (chat) url += `&chat=${encodeURIComponent(chat)}`;
+      const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
+      if (user) url += `&user=${encodeURIComponent(user.replace('@', ''))}`;
       return url;
     }
 
@@ -749,6 +759,8 @@
         const chat = document.getElementById('tgChatId').value.trim();
         if (bot) localStorage.setItem('vqr_bot', bot);
         if (chat) localStorage.setItem('vqr_chat', chat);
+        const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
+        if (user) localStorage.setItem('vqr_user', user);
       } else {
         const waPhone = document.getElementById('waPhoneInput').value.trim();
         if (waPhone) localStorage.setItem('vqr_waphone', waPhone);
@@ -978,6 +990,9 @@
       }
       if (localStorage.getItem('vqr_chat')) {
         document.getElementById('tgChatId').value = localStorage.getItem('vqr_chat');
+      }
+      if (localStorage.getItem('vqr_user')) {
+        document.getElementById('tgUsername').value = localStorage.getItem('vqr_user');
       }
       if (localStorage.getItem('vqr_waphone')) {
         document.getElementById('waPhoneInput').value = localStorage.getItem('vqr_waphone');

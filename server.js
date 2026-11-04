@@ -21,7 +21,8 @@ if (fs.existsSync(envPath) && process.loadEnvFile) {
 
 export const PORT = Number(process.env.PORT) || 3000;
 let TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
-let TG_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
+let TG_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '790475932';
+export let TG_USERNAME = process.env.TELEGRAM_USERNAME || 'saambsadashiv_108';
 let DEFAULT_VEHICLE = process.env.DEFAULT_VEHICLE || 'MH 14 ML 3751';
 
 // In-memory store for alerts and rate limiting
