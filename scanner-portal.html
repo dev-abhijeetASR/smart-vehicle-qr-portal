@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vehicle Contact Portal</title>
+  <title>Vehicle Emergency Contact Portal</title>
   <style>
     :root {
       --primary: #2563eb;
@@ -37,7 +37,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-bottom: 24px;
+      padding-bottom: 30px;
     }
     .header-card {
       background: var(--card-bg);
@@ -88,14 +88,15 @@
       padding: 6px 10px;
       border-radius: 8px;
       margin-top: 10px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
     .section-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-top: 8px;
+      margin-top: 4px;
     }
     .options-grid {
       display: grid;
@@ -106,7 +107,7 @@
       background: var(--card-bg);
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 14px;
+      padding: 13px 14px;
       color: var(--text);
       display: flex;
       align-items: center;
@@ -128,8 +129,8 @@
     }
     .option-icon {
       font-size: 20px;
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -137,10 +138,37 @@
       border-radius: 8px;
       flex-shrink: 0;
     }
+
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .chip {
+      font-size: 11px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover {
+      background: #2d3e58;
+      color: #fff;
+    }
+
     .custom-input-box {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+    }
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
     }
     textarea, input[type="text"], input[type="tel"] {
       width: 100%;
@@ -156,13 +184,14 @@
     textarea:focus, input:focus {
       border-color: var(--primary);
     }
+
     .send-btn {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: white;
       border: none;
       border-radius: 12px;
       padding: 16px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -188,7 +217,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 24px 20px;
+      padding: 26px 20px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
@@ -206,7 +235,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: rgba(37, 99, 235, 0.2);
+      background: rgba(37, 99, 235, 0.25);
       animation: pulse-ring 2s infinite ease-out;
     }
     @keyframes pulse-ring {
@@ -220,7 +249,7 @@
     .timer-display {
       font-size: 13px;
       color: var(--text-muted);
-      margin-top: 8px;
+      margin-top: 10px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -230,7 +259,7 @@
       background: rgba(16, 185, 129, 0.15);
       border: 1.5px solid var(--success);
       border-radius: 12px;
-      padding: 16px;
+      padding: 18px;
       text-align: left;
     }
     .response-banner.show {
@@ -246,15 +275,16 @@
       color: #34d399;
       font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .response-text {
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 800;
       color: #ffffff;
+      line-height: 1.4;
     }
 
     .footer {
@@ -268,13 +298,13 @@
 <body>
   <div class="container">
     <div class="header-card">
-      <div class="badge">🛡️ Smart Vehicle Decal</div>
+      <div class="badge">🛡️ Smart Vehicle Decal Portal</div>
       <div>
         <div class="plate" id="plateDisplay">VEHICLE</div>
       </div>
       <p class="subtitle">Vehicle owner has enabled instant notifications.</p>
       <div class="privacy-notice">
-        🔒 100% Privacy Protected • Owner phone number is shielded
+        🔒 100% Privacy Shield • Owner phone number is protected
       </div>
     </div>
 
@@ -301,7 +331,11 @@
         </button>
         <button type="button" class="option-btn" data-reason="Car alarm ringing or damage observed">
           <span class="option-icon">⚠️</span>
-          <span>Alarm ringing / Vehicle issue</span>
+          <span>Alarm ringing / Scratch / Flat tyre</span>
+        </button>
+        <button type="button" class="option-btn" data-reason="Child or Pet noticed inside car">
+          <span class="option-icon">🐶</span>
+          <span>Child or Pet noticed inside vehicle</span>
         </button>
         <button type="button" class="option-btn" data-reason="Other / Custom Note">
           <span class="option-icon">✏️</span>
@@ -310,13 +344,19 @@
       </div>
 
       <div class="custom-input-box">
-        <label style="font-size: 12px; color: var(--text-muted);">Additional Note (Optional):</label>
-        <textarea id="customNote" rows="2" placeholder="e.g. Parked behind you in silver sedan, need to leave"></textarea>
+        <label>Additional Note (Optional):</label>
+        <textarea id="customNote" rows="2" placeholder="e.g. Parked behind you, need to leave urgently"></textarea>
+        <div class="quick-chips">
+          <span class="chip" onclick="addChip('Need to exit urgently')">+ Urgent exit</span>
+          <span class="chip" onclick="addChip('Parked directly behind you')">+ Behind you</span>
+          <span class="chip" onclick="addChip('Blocking driveway/gate')">+ Blocking gate</span>
+          <span class="chip" onclick="addChip('Leaving in 5 minutes')">+ 5 mins</span>
+        </div>
       </div>
 
       <div class="custom-input-box">
-        <label style="font-size: 12px; color: var(--text-muted);">Your Contact Number (Optional, for callback):</label>
-        <input type="tel" id="senderPhone" placeholder="Enter your phone number">
+        <label>Your Phone Number (Optional, for owner callback):</label>
+        <input type="tel" id="senderPhone" placeholder="Enter phone number if you wish owner to call you">
       </div>
 
       <button type="button" class="send-btn" id="submitAlertBtn" onclick="sendAlert()">
@@ -333,7 +373,7 @@
       
       <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;" id="statusTitle">Alert Delivered to Owner</h2>
       <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;" id="statusSubtitle">
-        The vehicle owner's mobile phone received your urgent alert. Please keep this screen open for their reply.
+        The vehicle owner's mobile phone received your urgent notification. Please keep this screen open for their reply.
       </p>
 
       <div class="timer-display" id="elapsedTimer">Waiting for owner response: 0s</div>
@@ -348,15 +388,15 @@
         </div>
       </div>
 
-      <div style="margin-top: 20px; display: flex; gap: 8px; justify-content: center;">
-        <button style="background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 8px; font-size: 12px; cursor: pointer;" onclick="location.reload()">
-          Send Another Update
+      <div style="margin-top: 24px; display: flex; gap: 8px; justify-content: center;">
+        <button style="background: #1e293b; border: 1px solid var(--border); color: #cbd5e1; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;" onclick="location.reload()">
+          🔄 Send Another Update
         </button>
       </div>
     </div>
 
     <div class="footer">
-      Secured Smart Vehicle Contact Decal System
+      Secured Smart Vehicle Contact Decal System • v1.1
     </div>
   </div>
 
@@ -374,11 +414,6 @@
 
     document.getElementById('plateDisplay').textContent = vehicleNo;
 
-    // Show warning if credentials missing
-    if (!tgBotToken || !tgChatId) {
-      console.warn('Vehicle Portal: No Telegram credentials found in URL or cache.');
-    }
-
     function escapeHtml(text) {
       if (!text) return '';
       return String(text)
@@ -389,7 +424,16 @@
         .replace(/'/g, '&#039;');
     }
 
-    // Selection logic
+    function addChip(text) {
+      const noteInput = document.getElementById('customNote');
+      if (noteInput.value) {
+        noteInput.value += ', ' + text;
+      } else {
+        noteInput.value = text;
+      }
+    }
+
+    // Reason selection
     let selectedReason = "Car is blocking my vehicle";
     const optionBtns = document.querySelectorAll('.option-btn');
     optionBtns.forEach(btn => {
@@ -410,16 +454,10 @@
       const note = document.getElementById('customNote').value.trim();
       const senderPhone = document.getElementById('senderPhone').value.trim();
 
-      // Check if credentials exist
-      if (!tgBotToken || !tgChatId) {
-        alert('⚠️ Unable to deliver alert: This portal was opened without vehicle credentials.\n\nPlease scan the QR code from the vehicle sticker again.');
-        return;
-      }
-
       btn.disabled = true;
-      btn.textContent = '⏳ Dispatched alert...';
+      btn.textContent = '⏳ Dispatching alert...';
 
-      // 1. Try serverless / backend if available
+      // 1. Try serverless backend (/api/alert)
       try {
         const payload = {
           vehicle: vehicleNo,
@@ -442,18 +480,31 @@
           showLiveStatusView();
           startStatusPolling();
           return;
+        } else if (res.status === 429) {
+          const errData = await res.json().catch(() => ({}));
+          btn.disabled = false;
+          btn.textContent = '⚡ Send Urgent Alert to Owner';
+          alert(`⚠️ ${errData.error || 'Please wait a moment before sending another alert.'}`);
+          return;
         }
       } catch (err) {
-        // Backend not found (e.g. GitHub Pages static) - continue to direct Telegram API
+        // Backend not reachable - continue to direct Telegram API fallback
       }
 
       // 2. Direct Telegram API fallback (Reliable HTML parse_mode)
+      if (!tgBotToken || !tgChatId) {
+        btn.disabled = false;
+        btn.textContent = '⚡ Send Urgent Alert to Owner';
+        alert('⚠️ Unable to deliver alert: Vehicle credentials not found.\n\nPlease scan the QR code from the vehicle sticker again.');
+        return;
+      }
+
       const htmlText = 
         `🚨 <b>SMART VEHICLE ALERT: ${escapeHtml(vehicleNo)}</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `⚠️ <b>Reason:</b> ${escapeHtml(selectedReason)}\n` +
         `📝 <b>Note:</b> ${escapeHtml(note || 'None')}\n` +
-        `📞 <b>Sender Contact:</b> ${escapeHtml(senderPhone || 'Not provided')}\n` +
+        `📞 <b>Finder Contact:</b> ${escapeHtml(senderPhone || 'Not provided')}\n` +
         `🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `🔒 Sent via Smart Vehicle Privacy Portal`;
@@ -475,7 +526,7 @@
         } else {
           btn.disabled = false;
           btn.textContent = '⚡ Send Urgent Alert to Owner';
-          alert(`❌ Telegram Delivery Failed: ${data.description || 'Unknown error'}\n\nPlease check your Telegram bot settings.`);
+          alert(`❌ Telegram Delivery Failed: ${data.description || 'Unknown error'}\n\nPlease verify your Telegram bot configuration.`);
         }
       } catch (e) {
         btn.disabled = false;
@@ -511,19 +562,24 @@
             }
           }
         } catch (e) {
-          // ignore transient poll error
+          // ignore transient polling errors
         }
       }, 2000);
     }
 
     function displayOwnerResponse(responseText) {
       document.getElementById('statusIcon').textContent = '🎉';
-      document.getElementById('statusTitle').textContent = 'Owner is Responding!';
-      document.getElementById('statusSubtitle').textContent = 'The owner has sent a response directly from their phone.';
+      document.getElementById('statusTitle').textContent = 'Owner has Responded!';
+      document.getElementById('statusSubtitle').textContent = 'The owner tapped a direct reply on their phone:';
       
       const banner = document.getElementById('responseBanner');
       document.getElementById('responseText').textContent = `"${responseText}"`;
       banner.classList.add('show');
+
+      // Vibrate mobile device if supported
+      if ('vibrate' in navigator) {
+        try { navigator.vibrate([150, 100, 150]); } catch (e) {}
+      }
     }
   </script>
 </body>

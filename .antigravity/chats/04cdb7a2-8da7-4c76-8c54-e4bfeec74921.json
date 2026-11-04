@@ -3,6 +3,19 @@
   "name": "revise all the code that is",
   "createdAt": "2026-11-04T04:51:19.424Z",
   "filename": "04cdb7a2-8da7-4c76-8c54-e4bfeec74921.json",
-  "geminiStarted": false,
-  "messages": []
+  "geminiStarted": true,
+  "messages": [
+    {
+      "id": "63426f00-9c92-440a-8756-6c426c951135",
+      "role": "user",
+      "content": "revise all the code that is available in this github repository",
+      "status": "pending",
+      "model": "gemini-3.8-flash-high",
+      "client_type": "gemini-bridge",
+      "parent_message_id": null,
+      "created_at": "2026-11-04T04:51:21.315Z",
+      "sender": "ios",
+      "is_cancelled": false
+    }
+  ]
 }
