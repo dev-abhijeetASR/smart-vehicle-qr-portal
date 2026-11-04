@@ -287,6 +287,85 @@
       line-height: 1.4;
     }
 
+        /* Voice Note Card Styles */
+    .voice-action-card {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.12));
+      border: 1.5px solid rgba(245, 158, 11, 0.35);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .voice-badge {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .voice-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .voice-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .record-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+      transition: all 0.2s;
+    }
+    .record-btn.recording {
+      background: #7f1d1d;
+      animation: pulse-rec 1.2s infinite;
+    }
+    @keyframes pulse-rec {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+      50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+    .audio-preview-box {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .audio-player {
+      width: 100%;
+      height: 40px;
+      border-radius: 8px;
+    }
+    .voice-btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
     .footer {
       text-align: center;
       font-size: 11px;
@@ -365,6 +444,53 @@
       <button type="button" class="send-btn" id="submitAlertBtn" onclick="sendAlert()">
         <span>⚡ Send Instant Text/Reason Alert</span>
       </button>
+
+      <!-- Divider between Text Alert and Voice Note -->
+      <div style="display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin: 12px 0 6px;">
+        <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
+        <span style="padding: 0 10px;">OR LEAVE A VOICE NOTE</span>
+        <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
+      </div>
+
+      <!-- VOICE NOTE OPTION (Placed above direct calling) -->
+      <div class="voice-action-card">
+        <div class="voice-badge">🎙️ Voice Note Option</div>
+        <div class="voice-title">Leave a Quick Audio Message</div>
+        <p class="voice-desc">Record up to 30 seconds. Delivers directly into the owner's Telegram chat without needing any app.</p>
+
+        <!-- Initial Record Button State -->
+        <div id="voiceInitialState">
+          <button type="button" class="record-btn" id="startRecordBtn" onclick="toggleRecording()">
+            <span style="font-size: 18px;">🎙️</span>
+            <span>Tap to Record Voice Note</span>
+          </button>
+        </div>
+
+        <!-- Recording State -->
+        <div id="voiceRecordingState" style="display: none; flex-direction: column; gap: 10px; align-items: center;">
+          <div style="color: #ef4444; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ef4444; animation: blink 1s infinite;"></span>
+            <span>Recording... <span id="recordTimer">0:00</span> / 0:30</span>
+          </div>
+          <button type="button" class="record-btn recording" onclick="stopRecording()">
+            <span>⏹️ Stop & Review</span>
+          </button>
+        </div>
+
+        <!-- Review / Send State -->
+        <div class="audio-preview-box" id="voiceReviewState">
+          <audio id="audioPreview" class="audio-player" controls></audio>
+          <div class="voice-btn-row">
+            <button type="button" class="send-btn" id="sendVoiceBtn" style="flex: 2; padding: 12px;" onclick="sendVoiceNote()">
+              <span>📤 Send Voice Note</span>
+            </button>
+            <button type="button" style="flex: 1; background: #1e293b; border: 1px solid var(--border); color: #cbd5e1; border-radius: 12px; font-weight: 700; cursor: pointer; padding: 12px;" onclick="resetRecording()">
+              <span>🔄 Retry</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
 
       <div style="display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin: 8px 0 4px;">
         <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
@@ -630,6 +756,155 @@
         try { navigator.vibrate([150, 100, 150]); } catch (e) {}
       }
     }
+  
+    // -------------------------------------------------------------
+    // Voice Note Recording Logic (MediaRecorder -> Telegram sendVoice)
+    // -------------------------------------------------------------
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordInterval = null;
+    let recordSeconds = 0;
+    let recordedBlob = null;
+
+    async function toggleRecording() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Audio recording is not supported on this browser. Please use the text alert instead.");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        recordSeconds = 0;
+
+        let mimeType = 'audio/webm';
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
+          mimeType = 'audio/ogg;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        }
+
+        mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          recordedBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          const audioUrl = URL.createObjectURL(recordedBlob);
+          document.getElementById('audioPreview').src = audioUrl;
+
+          // Stop mic tracks
+          stream.getTracks().forEach(track => track.stop());
+
+          document.getElementById('voiceRecordingState').style.display = 'none';
+          document.getElementById('voiceReviewState').style.display = 'flex';
+        };
+
+        mediaRecorder.start();
+
+        document.getElementById('voiceInitialState').style.display = 'none';
+        document.getElementById('voiceRecordingState').style.display = 'flex';
+        document.getElementById('voiceReviewState').style.display = 'none';
+
+        recordInterval = setInterval(() => {
+          recordSeconds++;
+          const mins = Math.floor(recordSeconds / 60);
+          const secs = (recordSeconds % 60).toString().padStart(2, '0');
+          document.getElementById('recordTimer').textContent = `${mins}:${secs}`;
+          if (recordSeconds >= 30) {
+            stopRecording();
+          }
+        }, 1000);
+      } catch (err) {
+        console.error('Microphone error:', err);
+        alert("Microphone permission was denied or is unavailable. Please allow microphone access in your browser to record a voice note.");
+      }
+    }
+
+    function stopRecording() {
+      if (recordInterval) clearInterval(recordInterval);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    function resetRecording() {
+      if (recordInterval) clearInterval(recordInterval);
+      audioChunks = [];
+      recordedBlob = null;
+      document.getElementById('voiceInitialState').style.display = 'block';
+      document.getElementById('voiceRecordingState').style.display = 'none';
+      document.getElementById('voiceReviewState').style.display = 'none';
+      document.getElementById('recordTimer').textContent = '0:00';
+      document.getElementById('audioPreview').src = '';
+    }
+
+    async function sendVoiceNote() {
+      if (!recordedBlob) return;
+      if (!tgBotToken || !tgChatId) {
+        alert("Vehicle Telegram credentials not found. Please scan the QR code again.");
+        return;
+      }
+
+      const sendBtn = document.getElementById('sendVoiceBtn');
+      sendBtn.disabled = true;
+      sendBtn.textContent = '⏳ Uploading...';
+
+      const caption = `🎙️ <b>URGENT VOICE NOTE: ${escapeHtml(vehicleNo)}</b>\n━━━━━━━━━━━━━━━━━━━━━━\nA finder recorded an audio message from your vehicle decal.\n🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}\n🔒 Sent via Smart Vehicle Privacy Portal`;
+
+      const ext = recordedBlob.type.includes('mp4') ? 'm4a' : (recordedBlob.type.includes('ogg') ? 'ogg' : 'webm');
+      const filename = `voice_note_${Date.now()}.${ext}`;
+
+      const formData = new FormData();
+      formData.append('chat_id', tgChatId);
+      formData.append('voice', recordedBlob, filename);
+      formData.append('caption', caption);
+      formData.append('parse_mode', 'HTML');
+
+      try {
+        let resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendVoice`, {
+          method: 'POST',
+          body: formData
+        });
+
+        let resData = await resp.json().catch(() => ({}));
+
+        // Fallback to sendAudio if sendVoice fails
+        if (!resData.ok) {
+          const audioFormData = new FormData();
+          audioFormData.append('chat_id', tgChatId);
+          audioFormData.append('audio', recordedBlob, filename);
+          audioFormData.append('caption', caption);
+          audioFormData.append('parse_mode', 'HTML');
+
+          resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendAudio`, {
+            method: 'POST',
+            body: audioFormData
+          });
+          resData = await resp.json().catch(() => ({}));
+        }
+
+        if (resData.ok) {
+          showLiveStatusView();
+          document.getElementById('statusTitle').textContent = 'Voice Note Delivered to Owner!';
+          document.getElementById('statusSubtitle').textContent = "Your audio recording was delivered directly into the owner's Telegram.";
+        } else {
+          sendBtn.disabled = false;
+          sendBtn.textContent = '📤 Send Voice Note';
+          alert(`❌ Telegram Voice Upload Failed: ${resData.description || 'Unknown error'}`);
+        }
+      } catch (err) {
+        console.error('Send voice error:', err);
+        sendBtn.disabled = false;
+        sendBtn.textContent = '📤 Send Voice Note';
+        alert("❌ Network Error: Could not upload voice note to Telegram. Please check internet connection.");
+      }
+    }
+
   </script>
 </body>
 </html>

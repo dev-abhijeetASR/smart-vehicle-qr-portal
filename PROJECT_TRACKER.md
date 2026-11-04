@@ -2,6 +2,16 @@
 
 A complete log of the architecture, features, bug fixes, configuration, and deployment milestones completed for **Vehicle: MH 14 ML 3751**.
 
+### Milestone 8: In-Browser Emergency Voice Notes (Zero-App Audio Messaging)
+- Added an in-browser voice note recording engine right above the direct call feature.
+- Built-in capabilities:
+  - 1-tap browser microphone recording (MediaRecorder API) with live timer (up to 30s).
+  - Inline audio preview player (<audio>) allowing the finder to listen back before sending.
+  - One-click upload to Telegram Bot API (sendVoice with automatic fallback to sendAudio for cross-browser iOS/Android compatibility).
+  - Delivered directly into the owner\'s Telegram chat as an audible voice note with duration and timestamp.
+  - Requires zero apps for the finder (pure web browser).
+- Updated physical sticker decal badge to: 🔒 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED.
+
 ---
 
 ## 📌 Project Overview
