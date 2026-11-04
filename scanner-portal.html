@@ -467,25 +467,37 @@
         </div>
 
         <!-- Recording State -->
-        <div id="voiceRecordingState" style="display: none; flex-direction: column; gap: 10px; align-items: center;">
+        <div id="voiceRecordingState" style="display: none; flex-direction: column; gap: 10px; align-items: center; width: 100%;">
           <div style="color: #ef4444; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px;">
             <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ef4444; animation: blink 1s infinite;"></span>
-            <span>Recording... <span id="recordTimer">0:00</span> / 0:30</span>
+            <span>Recording Voice Note... <span id="recordTimer">0:00</span> / 0:30</span>
           </div>
+
+          <!-- Real-Time Mic Sound Level Meter -->
+          <div style="width: 100%; max-width: 280px; background: rgba(255,255,255,0.08); height: 10px; border-radius: 99px; overflow: hidden; margin: 4px 0 2px; border: 1px solid rgba(255,255,255,0.1);">
+            <div id="volumeLevelBar" style="height: 100%; width: 5%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444); border-radius: 99px; transition: width 0.08s ease;"></div>
+          </div>
+          <div id="micStatusText" style="font-size: 11px; color: #94a3b8; font-weight: 600;">
+            🎤 Speak into your microphone now...
+          </div>
+
           <button type="button" class="record-btn recording" onclick="stopRecording()">
             <span>⏹️ Stop & Review</span>
           </button>
         </div>
 
         <!-- Review / Send State -->
-        <div class="audio-preview-box" id="voiceReviewState">
-          <audio id="audioPreview" class="audio-player" controls></audio>
+        <div class="audio-preview-box" id="voiceReviewState" style="width: 100%;">
+          <div style="font-size: 12px; color: #38bdf8; font-weight: 700; text-align: center; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>🎧 Tap ▶️ to listen & test your voice before sending:</span>
+          </div>
+          <audio id="audioPreview" class="audio-player" controls style="width: 100%; border-radius: 8px; margin-bottom: 12px;"></audio>
           <div class="voice-btn-row">
             <button type="button" class="send-btn" id="sendVoiceBtn" style="flex: 2; padding: 12px;" onclick="sendVoiceNote()">
               <span>📤 Send Voice Note</span>
             </button>
             <button type="button" style="flex: 1; background: #1e293b; border: 1px solid var(--border); color: #cbd5e1; border-radius: 12px; font-weight: 700; cursor: pointer; padding: 12px;" onclick="resetRecording()">
-              <span>🔄 Retry</span>
+              <span>🔄 Re-record</span>
             </button>
           </div>
         </div>
@@ -548,6 +560,16 @@
       Secured Smart Vehicle Contact Decal System • v1.1
     </div>
   </div>
+
+  <!-- High-Fidelity MP3 Voice Recording Engine (Zero Native App Required) -->
+  <script src="js/mic-recorder.min.js"></script>
+  <script>
+    if (typeof MicRecorder === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mic-recorder-to-mp3@2.2.2/dist/index.min.js';
+      document.head.appendChild(s);
+    }
+  </script>
 
   <script>
     // Configuration from URL params or localStorage
@@ -758,13 +780,67 @@
     }
   
     // -------------------------------------------------------------
-    // Voice Note Recording Logic (MediaRecorder -> Telegram sendVoice)
+    // Voice Note Recording Logic (MP3 Audio Engine -> Telegram sendAudio)
     // -------------------------------------------------------------
-    let mediaRecorder = null;
-    let audioChunks = [];
+    let mp3Recorder = null;
+    let fallbackRecorder = null;
+    let fallbackChunks = [];
+    let isRecording = false;
     let recordInterval = null;
     let recordSeconds = 0;
     let recordedBlob = null;
+    let recordedMime = 'audio/mp3';
+    let audioLevelCtx = null;
+
+    function startAudioLevelMeter(stream) {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        audioLevelCtx = new AudioContextClass();
+        if (audioLevelCtx.state === 'suspended') {
+          audioLevelCtx.resume().catch(() => {});
+        }
+        const source = audioLevelCtx.createMediaStreamSource(stream);
+        const analyser = audioLevelCtx.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const bar = document.getElementById('volumeLevelBar');
+        const statusText = document.getElementById('micStatusText');
+
+        function checkLevel() {
+          if (!isRecording) {
+            if (audioLevelCtx && audioLevelCtx.state !== 'closed') {
+              audioLevelCtx.close().catch(() => {});
+            }
+            return;
+          }
+          analyser.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          let avg = sum / dataArray.length;
+          let pct = Math.min(100, Math.round((avg / 64) * 100));
+          if (bar) bar.style.width = Math.max(5, pct) + '%';
+          
+          if (statusText) {
+            if (pct > 12) {
+              statusText.textContent = '🟢 Sound detected! Keep speaking...';
+              statusText.style.color = '#34d399';
+            } else {
+              statusText.textContent = '🎤 Speak close to microphone...';
+              statusText.style.color = '#94a3b8';
+            }
+          }
+          requestAnimationFrame(checkLevel);
+        }
+        requestAnimationFrame(checkLevel);
+      } catch (e) {
+        console.warn('Audio level meter error:', e);
+      }
+    }
 
     async function toggleRecording() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -773,38 +849,40 @@
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioChunks = [];
+        isRecording = true;
         recordSeconds = 0;
+        document.getElementById('recordTimer').textContent = '0:00';
 
-        let mimeType = 'audio/webm';
-        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-          mimeType = 'audio/webm;codecs=opus';
-        } else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) {
-          mimeType = 'audio/ogg;codecs=opus';
-        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-          mimeType = 'audio/mp4';
+        // Check if MicRecorder (MP3 encoder) is available
+        if (typeof MicRecorder !== 'undefined') {
+          mp3Recorder = new MicRecorder({ bitRate: 128 });
+          const stream = await mp3Recorder.start();
+          if (mp3Recorder.context && mp3Recorder.context.state === 'suspended') {
+            await mp3Recorder.context.resume();
+          }
+          startAudioLevelMeter(stream);
+        } else {
+          // Native MediaRecorder fallback with enhanced constraints
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              autoGainControl: true,
+              noiseSuppression: false
+            }
+          });
+          startAudioLevelMeter(stream);
+
+          let mime = 'audio/webm';
+          if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+          else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
+          
+          fallbackChunks = [];
+          fallbackRecorder = new MediaRecorder(stream, { mimeType: mime });
+          fallbackRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) fallbackChunks.push(e.data);
+          };
+          fallbackRecorder.start(250);
         }
-
-        mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          recordedBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-          const audioUrl = URL.createObjectURL(recordedBlob);
-          document.getElementById('audioPreview').src = audioUrl;
-
-          // Stop mic tracks
-          stream.getTracks().forEach(track => track.stop());
-
-          document.getElementById('voiceRecordingState').style.display = 'none';
-          document.getElementById('voiceReviewState').style.display = 'flex';
-        };
-
-        mediaRecorder.start();
 
         document.getElementById('voiceInitialState').style.display = 'none';
         document.getElementById('voiceRecordingState').style.display = 'flex';
@@ -820,27 +898,59 @@
           }
         }, 1000);
       } catch (err) {
+        isRecording = false;
         console.error('Microphone error:', err);
-        alert("Microphone permission was denied or is unavailable. Please allow microphone access in your browser to record a voice note.");
+        alert("Microphone permission was denied or is unavailable. Please allow microphone access in your browser settings to record a voice note.");
       }
     }
 
-    function stopRecording() {
+    async function stopRecording() {
+      if (!isRecording) return;
+      isRecording = false;
       if (recordInterval) clearInterval(recordInterval);
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
+
+      try {
+        if (mp3Recorder) {
+          const [buffer, blob] = await mp3Recorder.stop().getMp3();
+          recordedBlob = blob;
+          recordedMime = 'audio/mp3';
+        } else if (fallbackRecorder) {
+          await new Promise(resolve => {
+            fallbackRecorder.onstop = resolve;
+            fallbackRecorder.stop();
+          });
+          recordedMime = fallbackRecorder.mimeType || 'audio/webm';
+          recordedBlob = new Blob(fallbackChunks, { type: recordedMime });
+          fallbackRecorder.stream.getTracks().forEach(track => track.stop());
+        }
+
+        if (recordedBlob) {
+          const audioUrl = URL.createObjectURL(recordedBlob);
+          const preview = document.getElementById('audioPreview');
+          preview.src = audioUrl;
+          preview.load();
+        }
+
+        document.getElementById('voiceRecordingState').style.display = 'none';
+        document.getElementById('voiceReviewState').style.display = 'flex';
+      } catch (e) {
+        console.error('Error stopping recorder:', e);
+        alert("Failed to process recording. Please tap Re-record to try again.");
+        resetRecording();
       }
     }
 
     function resetRecording() {
       if (recordInterval) clearInterval(recordInterval);
-      audioChunks = [];
+      isRecording = false;
+      fallbackChunks = [];
       recordedBlob = null;
       document.getElementById('voiceInitialState').style.display = 'block';
       document.getElementById('voiceRecordingState').style.display = 'none';
       document.getElementById('voiceReviewState').style.display = 'none';
       document.getElementById('recordTimer').textContent = '0:00';
-      document.getElementById('audioPreview').src = '';
+      const preview = document.getElementById('audioPreview');
+      preview.src = '';
     }
 
     async function sendVoiceNote() {
@@ -852,38 +962,51 @@
 
       const sendBtn = document.getElementById('sendVoiceBtn');
       sendBtn.disabled = true;
-      sendBtn.textContent = '⏳ Uploading...';
+      sendBtn.textContent = '⏳ Uploading audio...';
 
-      const caption = `🎙️ <b>URGENT VOICE NOTE: ${escapeHtml(vehicleNo)}</b>\n━━━━━━━━━━━━━━━━━━━━━━\nA finder recorded an audio message from your vehicle decal.\n🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}\n🔒 Sent via Smart Vehicle Privacy Portal`;
+      const caption = 
+        `🎙️ <b>URGENT VOICE NOTE: ${escapeHtml(vehicleNo)}</b>\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🔊 A finder recorded a voice note for your vehicle!\n` +
+        `⏱️ <b>Duration:</b> ${recordSeconds} seconds\n` +
+        `🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🔒 Sent via Smart Vehicle Privacy Portal`;
 
-      const ext = recordedBlob.type.includes('mp4') ? 'm4a' : (recordedBlob.type.includes('ogg') ? 'ogg' : 'webm');
+      const isMp3 = recordedMime.includes('mp3') || recordedBlob.type.includes('mp3');
+      const isM4a = recordedMime.includes('mp4') || recordedBlob.type.includes('mp4');
+      const ext = isMp3 ? 'mp3' : (isM4a ? 'm4a' : 'ogg');
       const filename = `voice_note_${Date.now()}.${ext}`;
 
       const formData = new FormData();
       formData.append('chat_id', tgChatId);
-      formData.append('voice', recordedBlob, filename);
+      formData.append('audio', recordedBlob, filename);
+      formData.append('title', `Voice Note (${recordSeconds}s)`);
+      formData.append('performer', `Vehicle ${vehicleNo}`);
+      formData.append('duration', recordSeconds);
       formData.append('caption', caption);
       formData.append('parse_mode', 'HTML');
 
       try {
-        let resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendVoice`, {
+        // Send via sendAudio (native Telegram music/audio player with guaranteed audible playback)
+        let resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendAudio`, {
           method: 'POST',
           body: formData
         });
 
         let resData = await resp.json().catch(() => ({}));
 
-        // Fallback to sendAudio if sendVoice fails
+        // Fallback to sendDocument if sendAudio fails
         if (!resData.ok) {
-          const audioFormData = new FormData();
-          audioFormData.append('chat_id', tgChatId);
-          audioFormData.append('audio', recordedBlob, filename);
-          audioFormData.append('caption', caption);
-          audioFormData.append('parse_mode', 'HTML');
+          const docData = new FormData();
+          docData.append('chat_id', tgChatId);
+          docData.append('document', recordedBlob, filename);
+          docData.append('caption', caption);
+          docData.append('parse_mode', 'HTML');
 
-          resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendAudio`, {
+          resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendDocument`, {
             method: 'POST',
-            body: audioFormData
+            body: docData
           });
           resData = await resp.json().catch(() => ({}));
         }
@@ -891,11 +1014,11 @@
         if (resData.ok) {
           showLiveStatusView();
           document.getElementById('statusTitle').textContent = 'Voice Note Delivered to Owner!';
-          document.getElementById('statusSubtitle').textContent = "Your audio recording was delivered directly into the owner's Telegram.";
+          document.getElementById('statusSubtitle').textContent = "Your audio recording was delivered directly into the owner's Telegram with clear sound playback.";
         } else {
           sendBtn.disabled = false;
           sendBtn.textContent = '📤 Send Voice Note';
-          alert(`❌ Telegram Voice Upload Failed: ${resData.description || 'Unknown error'}`);
+          alert(`❌ Telegram Upload Failed: ${resData.description || 'Unknown error'}`);
         }
       } catch (err) {
         console.error('Send voice error:', err);

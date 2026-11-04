@@ -131,6 +131,8 @@ smart-vehicle-qr-portal/
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Prevents secrets/logs from being committed
 ├── index.html                      # Decal Studio & QR Code Generator
+├── js/
+│   └── mic-recorder.min.js         # Client-side MP3 voice recording engine
 ├── package.json                    # Project metadata & run scripts
 ├── PROJECT_TRACKER.md              # Project history & feature tracker
 ├── qrcode.min.js                   # Client-side vector QR code generator
