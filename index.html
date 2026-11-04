@@ -744,7 +744,7 @@
       if (chat) url += `&chat=${encodeURIComponent(chat)}`;
       const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
       if (user) url += `&user=${encodeURIComponent(user.replace('@', ''))}`;
-      url += `&ver=2.5`;
+      url += `&ver=3.0`;
       return url;
     }
 

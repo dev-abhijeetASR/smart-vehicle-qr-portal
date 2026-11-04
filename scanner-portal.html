@@ -459,10 +459,11 @@
       <div class="voice-action-card">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
           <div class="voice-badge">🎙️ Voice Note Option</div>
-          <span style="font-size: 10px; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 99px; font-weight: 700;">🟢 v2.5 Sound Boost Active</span>
+          <span style="font-size: 10px; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 99px; font-weight: 700;">🟢 v3.0 Direct Stream</span>
         </div>
         <div class="voice-title">Leave a Quick Audio Message</div>
         <p class="voice-desc">Record up to 30 seconds. Delivers directly into the owner's Telegram chat without needing any app.</p>
+        <div id="audioDiagnostics" style="display: none; font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; margin-bottom: 6px; font-family: monospace; word-break: break-all;"></div>
 
         <!-- Initial Record Button State -->
         <div id="voiceInitialState">
@@ -570,7 +571,7 @@
     </div>
 
     <div class="footer">
-      Secured Smart Vehicle Contact Decal System • v1.1
+      Secured Smart Vehicle Contact Decal System • v3.0
     </div>
   </div>
 
@@ -785,7 +786,9 @@
     }
   
     // -------------------------------------------------------------
-    // High-Gain Universal Voice Note Recorder (v2.5)
+    // Direct-Stream Voice Recorder v3.0
+    // Records from RAW getUserMedia stream (no Web Audio routing)
+    // Web Audio is used ONLY for the visual volume meter
     // -------------------------------------------------------------
     let mediaStream = null;
     let audioCtx = null;
@@ -805,53 +808,51 @@
       }
 
       try {
-        // Request microphone with optimal voice settings
+        // Request microphone — keep all processing ON for best quality
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
             channelCount: 1,
+            sampleRate: 44100,
             echoCancellation: true,
-            noiseSuppression: false, // Prevents aggressive muting on Android phones
+            noiseSuppression: true,
             autoGainControl: true
           }
         });
 
-        // Setup single AudioContext with 3x Hardware Gain Boost
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass) {
-          audioCtx = new AudioContextClass();
-          if (audioCtx.state === 'suspended') {
-            await audioCtx.resume();
-          }
+        // ── DIAGNOSTIC: Check we actually got live audio tracks ──
+        const tracks = mediaStream.getAudioTracks();
+        const diagEl = document.getElementById('audioDiagnostics');
+        if (diagEl) {
+          const t = tracks[0];
+          const settings = t ? t.getSettings() : {};
+          diagEl.textContent = 'Tracks: ' + tracks.length +
+            ' | State: ' + (t ? t.readyState : 'none') +
+            ' | SR: ' + (settings.sampleRate || '?') +
+            ' | CH: ' + (settings.channelCount || '?');
+          diagEl.style.display = 'block';
         }
 
-        const source = audioCtx ? audioCtx.createMediaStreamSource(mediaStream) : null;
-        let recordingStream = mediaStream;
-
+        // ── VISUALIZER ONLY: AudioContext + AnalyserNode ──
+        // This does NOT touch the recording pipeline at all
         let analyser = null;
-        if (audioCtx && source) {
-          const gainNode = audioCtx.createGain();
-          gainNode.gain.value = 3.0; // 300% Gain boost!
-
-          analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 256;
-
-          source.connect(gainNode);
-          gainNode.connect(analyser);
-
-          if (audioCtx.createMediaStreamDestination) {
-            try {
-              const dest = audioCtx.createMediaStreamDestination();
-              gainNode.connect(dest);
-              if (dest.stream && dest.stream.getAudioTracks().length > 0) {
-                recordingStream = dest.stream;
-              }
-            } catch (e) {
-              console.warn("createMediaStreamDestination error, fallback to raw mic:", e);
-            }
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) {
+            audioCtx = new AC();
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+            const source = audioCtx.createMediaStreamSource(mediaStream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            // analyser is a dead-end (not connected to destination),
+            // so it only reads levels — never mutates the stream
           }
+        } catch (vizErr) {
+          console.warn('Visualizer setup failed (recording unaffected):', vizErr);
         }
 
-        // Determine best supported MIME type
+        // ── RECORDING: directly from raw getUserMedia stream ──
+        // NO GainNode, NO createMediaStreamDestination
         let mime = '';
         if (MediaRecorder.isTypeSupported('audio/mp4')) {
           mime = 'audio/mp4';
@@ -863,8 +864,8 @@
           mime = 'audio/ogg;codecs=opus';
         }
 
-        const options = mime ? { mimeType: mime } : {};
-        mediaRecorder = new MediaRecorder(recordingStream, options);
+        const recOpts = mime ? { mimeType: mime } : {};
+        mediaRecorder = new MediaRecorder(mediaStream, recOpts);   // ← RAW stream
         recordedMime = mediaRecorder.mimeType || mime || 'audio/webm';
         recordedChunks = [];
 
@@ -881,26 +882,28 @@
           preview.src = audioUrl;
           preview.load();
 
-          // Show recorded stats
+          // Stats badge
           const sizeKb = Math.round(recordedBlob.size / 1024);
           const statsBadge = document.getElementById('audioStatsBadge');
           if (statsBadge) {
-            statsBadge.textContent = `✅ Recorded ${recordSeconds}s audio (${sizeKb} KB) • Ready to send`;
+            statsBadge.textContent =
+              '✅ Recorded ' + recordSeconds + 's (' + sizeKb + ' KB, ' + recordedMime + ') • Tap ▶ to verify';
           }
 
-          // Cleanup mic hardware tracks
-          if (mediaStream) {
-            mediaStream.getTracks().forEach(t => t.stop());
+          // Update diagnostics
+          if (diagEl) {
+            diagEl.textContent += ' | Blob: ' + sizeKb + 'KB ' + recordedMime;
           }
-          if (audioCtx && audioCtx.state !== 'closed') {
-            audioCtx.close().catch(() => {});
-          }
+
+          // Release mic
+          if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+          if (audioCtx && audioCtx.state !== 'closed') audioCtx.close().catch(() => {});
 
           document.getElementById('voiceRecordingState').style.display = 'none';
           document.getElementById('voiceReviewState').style.display = 'flex';
         };
 
-        // Switch UI to recording state
+        // ── Switch UI to recording ──
         isRecording = true;
         recordSeconds = 0;
         document.getElementById('recordTimer').textContent = '0:00';
@@ -908,10 +911,9 @@
         document.getElementById('voiceRecordingState').style.display = 'flex';
         document.getElementById('voiceReviewState').style.display = 'none';
 
-        // Start recording with continuous chunk flushes
-        mediaRecorder.start(250);
+        mediaRecorder.start(250);   // flush chunks every 250ms
 
-        // Visualizer Loop
+        // ── Volume visualizer loop (reads from analyser, never writes) ──
         if (analyser) {
           const dataArray = new Uint8Array(analyser.frequencyBinCount);
           const bar = document.getElementById('volumeLevelBar');
@@ -922,23 +924,17 @@
             if (!isRecording) return;
             analyser.getByteFrequencyData(dataArray);
             let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-              sum += dataArray[i];
-            }
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
             let avg = sum / dataArray.length;
             let pct = Math.min(100, Math.round((avg / 50) * 100));
 
             if (bar) {
               bar.style.width = Math.max(10, pct) + '%';
-              if (pct > 15) {
-                bar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-              } else {
-                bar.style.background = 'linear-gradient(90deg, #f59e0b, #ef4444)';
-              }
+              bar.style.background = pct > 15
+                ? 'linear-gradient(90deg, #10b981, #34d399)'
+                : 'linear-gradient(90deg, #f59e0b, #ef4444)';
             }
-            if (pctDisplay) {
-              pctDisplay.textContent = pct + '%';
-            }
+            if (pctDisplay) pctDisplay.textContent = pct + '%';
             if (micStatus) {
               if (pct > 15) {
                 micStatus.textContent = '🟢 Audio detected! Keep speaking...';
@@ -953,21 +949,19 @@
           drawMeter();
         }
 
-        // Timer
+        // Timer (auto-stop at 30s)
         recordInterval = setInterval(() => {
           recordSeconds++;
           const mins = Math.floor(recordSeconds / 60);
           const secs = (recordSeconds % 60).toString().padStart(2, '0');
-          document.getElementById('recordTimer').textContent = `${mins}:${secs}`;
-          if (recordSeconds >= 30) {
-            stopRecording();
-          }
+          document.getElementById('recordTimer').textContent = mins + ':' + secs;
+          if (recordSeconds >= 30) stopRecording();
         }, 1000);
 
       } catch (err) {
         isRecording = false;
         console.error('Microphone recording error:', err);
-        alert("Microphone error: " + (err.message || "Permission was denied. Please allow microphone in browser settings."));
+        alert("Microphone error: " + (err.message || "Permission denied. Allow microphone in browser settings."));
       }
     }
 
