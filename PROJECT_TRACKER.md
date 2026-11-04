@@ -94,6 +94,30 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
   1. Fast 1-tap structured reason alerts (immediate, zero apps for the finder).
   2. Escalation option at the bottom: **"📞 Direct Private Call"** for urgent cases requiring voice communication.
 
+### Milestone 8: In-Browser Emergency Voice Notes (Zero-App Audio Messaging)
+- Added an in-browser voice note recording engine right above the direct call feature.
+- Built-in capabilities:
+  - 1-tap browser microphone recording with live timer (up to 30s).
+  - Inline audio preview player (`<audio>`) allowing the finder to listen back before sending.
+  - Requires zero apps for the finder (runs 100% in mobile Safari, Chrome, and Samsung Internet).
+- Updated physical sticker decal badge to: `🔒 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED`.
+
+### Milestone 9: Audio Pipeline Diagnostics & Container Fix
+- Diagnosed root cause of silent audio: Telegram's `sendVoice` endpoint strictly requires Opus-in-OGG, while mobile browsers capture Opus-in-WebM (Android) or AAC-in-MP4 (iOS). WebM files sent to `sendVoice` play as 0-volume silence in Telegram's mobile app.
+
+### Milestone 10: High-Gain Native Audio Engine & Mobile Cache-Busting (v2.5)
+- **Root Cause of User Experience**:
+  1. The user's mobile browser was serving an older cached version of `scanner-portal.html` due to GitHub Pages `Cache-Control: max-age=600` (10-minute cache window), which lacked the volume visualizer.
+  2. Mobile browsers on silent/vibrate mode mute HTML `<audio>` elements unless media volume is explicitly turned up.
+  3. Deprecated `ScriptProcessorNode` in third-party libraries causes silence on modern Android Chrome.
+- **Upgrades Implemented**:
+  1. **Visual Version Badge (`🟢 v2.5 Sound Boost Active`)**: Added an unmistakable green pill to the card so users can visually verify they are running the latest live build.
+  2. **Cache-Busting Integration**: Added `<meta http-equiv="Cache-Control" content="no-cache">` tags and appended `&ver=2.5` to all generated QR decal URLs.
+  3. **3x Hardware Gain Boost**: Embedded a native Web Audio `GainNode` set to `3.0` (300% volume amplification) routing directly into native `MediaRecorder` via `createMediaStreamDestination`.
+  4. **Multi-Platform Container Handling**: Native support for `audio/mp4` (`.m4a` on iOS and Android Chrome 126+), `audio/webm;codecs=opus`, and `audio/ogg`.
+  5. **Triple-Tier Telegram Delivery**: Auto-attempts `sendAudio` -> `sendVoice` -> `sendDocument` with full audio metadata and time duration.
+  6. **Interactive Volume Feedback**: Real-time volume meter with percentage indicator (`0%` to `100%`) and recorded audio file size indicator (`KB`).
+
 ---
 
 ## ⚙️ Active Configuration Reference
@@ -131,8 +155,6 @@ smart-vehicle-qr-portal/
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Prevents secrets/logs from being committed
 ├── index.html                      # Decal Studio & QR Code Generator
-├── js/
-│   └── mic-recorder.min.js         # Client-side MP3 voice recording engine
 ├── package.json                    # Project metadata & run scripts
 ├── PROJECT_TRACKER.md              # Project history & feature tracker
 ├── qrcode.min.js                   # Client-side vector QR code generator
