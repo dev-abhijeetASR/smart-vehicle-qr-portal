@@ -78,6 +78,12 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
   - HTML escaping sanitization.
 - Result: **All 9 tests passing (100% pass rate)**.
 
+### Milestone 7: Scanner Portal UI Hierarchy Refinement
+- Relocated the **Direct Private Call** card to the bottom of the scanner portal (underneath the 1-tap quick reason options and send alert button).
+- Established an intuitive visual hierarchy:
+  1. Fast 1-tap structured reason alerts (immediate, zero apps for the finder).
+  2. Escalation option at the bottom: **"📞 Direct Private Call"** for urgent cases requiring voice communication.
+
 ---
 
 ## ⚙️ Active Configuration Reference

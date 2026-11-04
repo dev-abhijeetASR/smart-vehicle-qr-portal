@@ -308,25 +308,7 @@
       </div>
     </div>
 
-    <!-- PRIMARY EMERGENCY ACTION: Direct Private Call -->
-    <div class="call-action-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(37, 99, 235, 0.14)); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
-      <div style="display: inline-block; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 99px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px;">🚨 Primary Emergency Option</div>
-      <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Need to talk to the owner right now?</div>
-      <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">Initiate a private Telegram voice call. Rings owner's phone directly with zero phone numbers revealed.</p>
-      <a href="https://t.me/saambsadashiv_108" id="directCallLink" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 15px 20px; border-radius: 12px; font-size: 16px; font-weight: 800; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); cursor: pointer;" onclick="logDirectCall()">
-        <span style="font-size: 20px;">📞</span>
-        <span>Direct Private Call</span>
-      </a>
-      <div style="font-size: 11px; color: #a7f3d0; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-        🔒 100% Private • Rings Owner Directly
-      </div>
-    </div>
 
-    <div style="display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin: 4px 0;">
-      <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
-      <span style="padding: 0 10px;">OR SEND A 1-TAP ALERT (NO APP NEEDED)</span>
-      <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
-    </div>
 
 
     <!-- Alert Form -->
@@ -383,6 +365,26 @@
       <button type="button" class="send-btn" id="submitAlertBtn" onclick="sendAlert()">
         <span>⚡ Send Instant Text/Reason Alert</span>
       </button>
+
+      <div style="display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; margin: 8px 0 4px;">
+        <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
+        <span style="padding: 0 10px;">OR TALK DIRECTLY TO THE OWNER</span>
+        <span style="flex: 1; border-bottom: 1px solid var(--border);"></span>
+      </div>
+
+      <!-- DIRECT CALL ACTION: Placed at the end -->
+      <div class="call-action-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(37, 99, 235, 0.14)); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
+        <div style="display: inline-block; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 99px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px;">📞 Direct Call Option</div>
+        <div style="font-size: 15px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Still need to speak to the owner?</div>
+        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">Initiate a private Telegram voice call. Rings owner's phone directly with zero phone numbers revealed.</p>
+        <a href="https://t.me/saambsadashiv_108" id="directCallLink" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 800; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); cursor: pointer;" onclick="logDirectCall()">
+          <span style="font-size: 20px;">📞</span>
+          <span>Direct Private Call</span>
+        </a>
+        <div style="font-size: 11px; color: #a7f3d0; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          🔒 100% Private • Rings Owner Directly
+        </div>
+      </div>
     </div>
 
     <!-- Live Status / Awaiting Response View -->
