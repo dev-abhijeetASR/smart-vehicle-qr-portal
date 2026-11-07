@@ -590,27 +590,27 @@
     if (params.get('chat')) localStorage.setItem('vqr_chat', params.get('chat'));
 
     document.getElementById('plateDisplay').textContent = vehicleNo;
-    let waUsername = params.get('wa') || params.get('user') || localStorage.getItem('vqr_wa') || 'sambsadashiv_108';
-    if (params.get('wa')) localStorage.setItem('vqr_wa', params.get('wa'));
+    let tgUsername = params.get('user') || localStorage.getItem('vqr_user') || 'saambsadashiv_108';
+    if (params.get('user')) localStorage.setItem('vqr_user', params.get('user'));
 
     const directCallLink = document.getElementById('directCallLink');
-    if (directCallLink) {
-      const cleanWa = waUsername.replace('@', '');
-      const defaultMsg = encodeURIComponent(`Hi! I am near your vehicle [${vehicleNo}].`);
-      directCallLink.href = `https://wa.me/${cleanWa}?text=${defaultMsg}`;
-    }
+    const webFallbackLink = document.getElementById('webFallbackLink');
+    const cleanUser = (tgUsername || 'saambsadashiv_108').replace('@', '');
 
-    function handleDirectCall() {
-      logDirectCall();
+    if (directCallLink) {
+      directCallLink.href = 'tg://resolve?domain=' + cleanUser;
+    }
+    if (webFallbackLink) {
+      webFallbackLink.href = 'https://t.me/' + cleanUser;
     }
 
     function logDirectCall() {
       if (tgBotToken && tgChatId) {
         const text = 
-          `💬 <b>INCOMING WHATSAPP CONTACT: ${escapeHtml(vehicleNo)}</b>\n` +
+          `📞 <b>INCOMING CALL ATTEMPT: ${escapeHtml(vehicleNo)}</b>\n` +
           `━━━━━━━━━━━━━━━━━━━━━━\n` +
-          `A finder just tapped <b>"WhatsApp Call / Chat"</b> on your vehicle portal!\n` +
-          `Please check your WhatsApp for an incoming call or message.\n` +
+          `A finder just tapped <b>"Direct Private Call"</b> on your vehicle portal!\n` +
+          `Please check your Telegram for the incoming call.\n` +
           `🕒 <b>Time:</b> ${new Date().toLocaleTimeString()}`;
         try {
           fetch(`https://api.telegram.org/bot${tgBotToken}/sendMessage`, {

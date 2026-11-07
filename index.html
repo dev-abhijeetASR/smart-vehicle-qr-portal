@@ -528,7 +528,7 @@
 
         <div class="form-group" style="margin-top: 14px;">
           <label>Telegram Call Username (Direct Private Calling)</label>
-          <input type="text" id="tgUsername" value="sambsadashiv_108" placeholder="e.g. saambsadashiv_108" oninput="updateSticker()">
+          <input type="text" id="tgUsername" value="saambsadashiv_108" placeholder="e.g. saambsadashiv_108" oninput="updateSticker()">
           <span style="font-size: 11px; color: #a7f3d0;">
             📞 Enables <strong>"Direct Private Call"</strong> on your portal. Finder can call your Telegram handle directly without seeing your phone number.
           </span>
@@ -743,7 +743,7 @@
       if (bot) url += `&bot=${encodeURIComponent(bot)}`;
       if (chat) url += `&chat=${encodeURIComponent(chat)}`;
       const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
-      if (user) url += `&wa=${encodeURIComponent(user.replace('@', ''))}`;
+      if (user) url += `&user=${encodeURIComponent(user.replace('@', ''))}`;
       url += `&ver=3.0`;
       return url;
     }

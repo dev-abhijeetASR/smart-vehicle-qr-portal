@@ -175,6 +175,13 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 18: Pure App-Scheme Protocol (Zero-JS-Timer tg://resolve)
+- **Problem Diagnosed**: Previous iterations had conflicting JS timer redirects that caused Telegram to show "username not found", or standard web URLs that stopped at `telegram.org`.
+- **The Solution**: Direct pure HTML deep link using `tg://resolve?domain=saambsadashiv_108` with an optional visual fallback text link pointing to `https://t.me/saambsadashiv_108`.
+- **Zero Collision**: Removed all JavaScript redirection timers, allowing Android/iOS to cleanly hand off directly into the Telegram app profile.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
