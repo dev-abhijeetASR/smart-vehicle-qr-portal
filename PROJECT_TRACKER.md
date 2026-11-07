@@ -136,6 +136,16 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 13: Universal Scanner Delivery (Hardcoded Bot Fallback)
+- **Problem**: When a new or different phone scanned the QR code, the browser lacked the Bot Token in `localStorage`, causing Telegram text and voice alerts to fail with "Vehicle credentials not found".
+- **The Fix**:
+  1. Configured owner bot token (`9034703313:AAFYuKh6F50zvouwacfiuvA3aEOcfSCZIUo`) as the native fallback in `scanner-portal.html`.
+  2. Any phone or browser in the world scanning the QR sticker can now dispatch 1-tap alerts and voice notes instantly, with or without `&bot=` in the URL.
+  3. Pre-populated Decal Studio input in `index.html` and synchronized local `.env`.
+  4. Regenerated high-contrast 480px QR Code image with complete parameters.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |

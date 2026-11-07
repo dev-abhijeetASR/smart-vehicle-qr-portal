@@ -21,5 +21,8 @@
     "emergency-contact"
   ],
   "author": "dev-abhijeetASR",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
 }
