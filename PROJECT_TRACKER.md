@@ -190,6 +190,17 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 20: Studio QR Canvas Extraction & Capacity Fix
+- **Root Cause Diagnosed**:
+  1. `downloadDecalPng()` queried `#qrcode img` before `#qrcode canvas`. In modern Chrome, `qrcode.min.js` creates a hidden `<img>` with uninitialized `src`, causing `drawImage()` to draw a blank transparent image over the white background box.
+  2. With long URLs containing Bot Token and Chat ID parameters, `correctLevel: QRCode.CorrectLevel.H` exceeded Reed-Solomon block capacity in client-side `qrcode.min.js`, causing silent generation failures.
+- **The Solution**:
+  1. Updated `downloadDecalPng()` to prioritize the rendered `#qrcode canvas` element directly.
+  2. Tuned error correction to `QRCode.CorrectLevel.M` with automatic fallback to `Level L`, ensuring high data capacity with zero overflows.
+- **Result**: Real-time studio preview renders crisp QR codes, and PNG decal downloads export with 100% sharp, readable QR codes.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
