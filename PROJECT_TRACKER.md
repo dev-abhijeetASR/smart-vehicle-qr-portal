@@ -146,6 +146,13 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 14: Native Telegram Waveform Voice Bubbles
+- **Upgrade**: Switched Telegram audio upload priority from `sendAudio` (file player) to `sendVoice` (native circular voice bubble with live waveform).
+- **Format Normalization**: Browser-recorded Opus streams are uploaded as `.ogg`/`.oga` voice containers, triggering Telegram's native in-app audio speech player rather than a downloadable music file.
+- **Graceful Fallback**: Preserves secondary fallback to `sendAudio` and `sendDocument` for edge devices.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |

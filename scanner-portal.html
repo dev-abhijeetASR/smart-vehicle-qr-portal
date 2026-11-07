@@ -1012,7 +1012,7 @@
       sendBtn.textContent = '⏳ Uploading audio...';
 
       const isMp4 = recordedMime.includes('mp4') || recordedBlob.type.includes('mp4');
-      const ext = isMp4 ? 'm4a' : (recordedMime.includes('ogg') ? 'ogg' : 'webm');
+      const ext = isMp4 ? 'm4a' : 'ogg';
       const filename = `voice_note_${Date.now()}.${ext}`;
 
       const caption = 
@@ -1024,35 +1024,36 @@
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
         `🔒 Sent via Smart Vehicle Privacy Portal`;
 
-      const formData = new FormData();
-      formData.append('chat_id', tgChatId);
-      formData.append('audio', recordedBlob, filename);
-      formData.append('title', `Voice Note (${recordSeconds}s)`);
-      formData.append('performer', `Vehicle ${vehicleNo}`);
-      formData.append('duration', recordSeconds);
-      formData.append('caption', caption);
-      formData.append('parse_mode', 'HTML');
-
       try {
-        // 1. Try Telegram sendAudio (native player for m4a / audio)
-        let resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendAudio`, {
+        // 1. Send as native Telegram Voice Message (renders as circular waveform bubble)
+        const voiceData = new FormData();
+        voiceData.append('chat_id', tgChatId);
+        voiceData.append('voice', recordedBlob, filename);
+        voiceData.append('duration', recordSeconds);
+        voiceData.append('caption', caption);
+        voiceData.append('parse_mode', 'HTML');
+
+        let resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendVoice`, {
           method: 'POST',
-          body: formData
+          body: voiceData
         });
 
         let resData = await resp.json().catch(() => ({}));
 
-        // 2. If sendAudio rejected, try sendVoice
+        // 2. Fallback to sendAudio if sendVoice rejected
         if (!resData.ok) {
-          const voiceData = new FormData();
-          voiceData.append('chat_id', tgChatId);
-          voiceData.append('voice', recordedBlob, filename);
-          voiceData.append('caption', caption);
-          voiceData.append('parse_mode', 'HTML');
+          const audioData = new FormData();
+          audioData.append('chat_id', tgChatId);
+          audioData.append('audio', recordedBlob, filename);
+          audioData.append('title', `Voice Note (${recordSeconds}s)`);
+          audioData.append('performer', `Vehicle ${vehicleNo}`);
+          audioData.append('duration', recordSeconds);
+          audioData.append('caption', caption);
+          audioData.append('parse_mode', 'HTML');
 
-          resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendVoice`, {
+          resp = await fetch(`https://api.telegram.org/bot${tgBotToken}/sendAudio`, {
             method: 'POST',
-            body: voiceData
+            body: audioData
           });
           resData = await resp.json().catch(() => ({}));
         }
