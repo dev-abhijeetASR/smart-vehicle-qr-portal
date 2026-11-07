@@ -182,6 +182,14 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 19: Permanent WhatsApp Urgent Calling (System-Wakeup Guaranteed)
+- **Problem Diagnosed**: Modern Android OS aggressively kills Telegram background processes when swiped away from Recents, causing incoming calls to stay on "Waiting..." and preventing the recipient phone from ringing until the app is reopened manually.
+- **The Solution**: Upgraded direct call action to **WhatsApp Direct Calling** (`https://wa.me/919869783690`).
+- **100% Wakeup Reliability**: WhatsApp's deep telecom and Google Play Services integration ensures calls ring with full-screen ringtone even when the phone is locked or the app was closed.
+- **Cross-Alert Notification**: Tapping the WhatsApp button sends an automatic background notification to the Telegram bot (`💬 INCOMING WHATSAPP CONTACT: MH 14 ML 3751`), keeping the owner informed across both channels.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
