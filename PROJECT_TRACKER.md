@@ -129,6 +129,13 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 12: Direct Calling Protocol Upgrade (tg://call Scheme)
+- **Upgrade**: Upgraded the "Direct Private Call" button from standard web profile routing (`https://t.me/username`) to Telegram's native calling URI scheme (`tg://call?username=username`).
+- **Auto-Dial Launch**: On mobile devices with Telegram installed, tapping the button directly launches Telegram's full-screen voice call dialer without stopping at the intermediate chat window.
+- **Graceful Fallback**: Added `handleDirectCall()` with an automated 1.5-second fallback to `https://t.me/username` for desktop browsers or devices where native app handlers are restricted.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
