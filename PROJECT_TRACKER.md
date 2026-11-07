@@ -153,6 +153,13 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 15: Deep-Link Profile Resolution (tg://resolve?domain=)
+- **Root Cause Diagnosed**: `tg://call?username=` is not a standard route parameter on Telegram mobile apps, causing Telegram to fallback to the general "Contacts Search" screen.
+- **The Solution**: Upgraded direct call trigger to `tg://resolve?domain=saambsadashiv_108` with web fallback to `https://t.me/saambsadashiv_108`.
+- **Result**: Tapping the button on mobile immediately opens the owner's exact personal chat/profile directly (skipping any contact search). The finder simply taps the prominent 📞 Call icon at the top right header to ring the owner.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
