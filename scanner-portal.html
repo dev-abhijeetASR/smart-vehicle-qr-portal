@@ -529,7 +529,7 @@
         <div style="display: inline-block; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 99px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px;">📞 Direct Call Option</div>
         <div style="font-size: 15px; font-weight: 800; color: #ffffff; margin-bottom: 4px;">Still need to speak to the owner?</div>
         <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">Initiate a private Telegram voice call. Rings owner's phone directly with zero phone numbers revealed.</p>
-        <a href="tg://resolve?domain=saambsadashiv_108" id="directCallLink" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 800; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); cursor: pointer;" onclick="handleDirectCall(event)">
+        <a href="https://t.me/saambsadashiv_108" id="directCallLink" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; text-decoration: none; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 800; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); cursor: pointer;" onclick="handleDirectCall()">
           <span style="font-size: 20px;">📞</span>
           <span>Direct Private Call</span>
         </a>
@@ -595,18 +595,13 @@
 
     const directCallLink = document.getElementById('directCallLink');
     if (directCallLink) {
-      directCallLink.href = 'tg://resolve?domain=' + tgUsername.replace('@', '');
+      const cleanUser = (tgUsername || 'saambsadashiv_108').replace('@', '');
+      directCallLink.href = 'https://t.me/' + cleanUser;
     }
 
-    function handleDirectCall(e) {
-      if (e) e.preventDefault();
+    function handleDirectCall() {
       logDirectCall();
-      const cleanUser = (tgUsername || 'saambsadashiv_108').replace('@', '');
-      const callUrl = 'tg://resolve?domain=' + cleanUser;
-      const webUrl = 'https://t.me/' + cleanUser;
-      window.location.href = callUrl;
-      setTimeout(() => { window.location.href = webUrl; }, 1500);
-    
+      // Natural browser navigation via target="_blank" Universal Links (no JS timer collision)
     }
 
     function logDirectCall() {

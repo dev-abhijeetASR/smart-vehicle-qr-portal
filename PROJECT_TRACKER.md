@@ -160,6 +160,13 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 16: Universal Link Optimization (Timer Collision Elimination)
+- **Root Cause Diagnosed**: The background `setTimeout(webUrl, 1500)` fired simultaneously while the Android operating system was launching Telegram for `tg://resolve`. This second navigation race condition interrupted Telegram's intent resolution, causing the app to display "Username not found".
+- **The Solution**: Replaced the fragile double-intent timer with native Universal Links (`target="_blank" rel="noopener"` pointing to `https://t.me/username`).
+- **Result**: Android App Links and iOS Universal Links hand off cleanly to Telegram without race conditions, reliably opening the profile of "अभिजीत सिंह रघुवंशी" (@saambsadashiv_108).
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
