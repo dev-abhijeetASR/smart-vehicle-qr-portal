@@ -167,6 +167,14 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+### Milestone 17: WhatsApp Direct Calling & Messaging Integration
+- **Context**: While Telegram text and native voice notes function reliably, Telegram's third-party web preview pages introduce friction on mobile devices.
+- **The Solution**: Upgraded the direct emergency contact button to **WhatsApp Direct Call & Chat** (`https://wa.me/sambsadashiv_108`).
+- **Seamless Mobile Experience**: Tapping the button launches WhatsApp directly with an auto-prefilled message (*"Hi! I am near your vehicle [MH 14 ML 3751]."*), allowing finders to immediately place a free voice call or send a chat.
+- **Cross-Platform Security Alert**: Whenever a finder taps the WhatsApp button, the portal sends an automated background alert to the owner's Telegram bot (`💬 INCOMING WHATSAPP CONTACT: MH 14 ML 3751`), notifying the owner in real time.
+
+---
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |
