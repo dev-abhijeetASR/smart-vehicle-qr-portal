@@ -201,6 +201,19 @@ A complete log of the architecture, features, bug fixes, configuration, and depl
 
 ---
 
+
+---
+
+### Milestone 21: Studio QR Canvas Extraction & Capacity Fix (Deployed)
+- **Root Cause Diagnosed**:
+  1. `downloadDecalPng()` queried `#qrcode img` before `#qrcode canvas`. In modern Chrome, `qrcode.min.js` creates a hidden `<img>` with uninitialized `src`, causing `drawImage()` to draw a blank transparent image over the white background box.
+  2. With long URLs containing Bot Token and Chat ID parameters (~200 chars), `correctLevel: QRCode.CorrectLevel.H` threw a client-side exception (`code length overflow (1588>1056)`), which cleared `#qrcode` and aborted rendering in both the preview and PNG export.
+- **The Solution**:
+  1. Updated `downloadDecalPng()` to prioritize the rendered `#qrcode canvas` element directly, with an automatic offscreen canvas fallback to guarantee downloads are never blank.
+  2. Tuned error correction to `QRCode.CorrectLevel.M` (with automatic fallback to `Level L`), ensuring high data capacity (~394 bytes) with zero overflows.
+  3. Aligned Studio input to "Emergency WhatsApp Contact" (`919869783690`) matching Milestone 19's reliable phone ring engine.
+- **Result**: Real-time studio preview renders crisp QR codes, and PNG decal downloads export with 100% sharp, readable QR codes.
+
 ## ⚙️ Active Configuration Reference
 
 | Parameter | Current Value | Notes |

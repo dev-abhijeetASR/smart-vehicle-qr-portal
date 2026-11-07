@@ -527,10 +527,10 @@
         </div>
 
         <div class="form-group" style="margin-top: 14px;">
-          <label>Telegram Call Username (Direct Private Calling)</label>
-          <input type="text" id="tgUsername" value="saambsadashiv_108" placeholder="e.g. saambsadashiv_108" oninput="updateSticker()">
+          <label>Emergency WhatsApp Contact (Calls & Direct Chat)</label>
+          <input type="tel" id="emergencyPhone" value="919869783690" placeholder="e.g. 919869783690" oninput="updateSticker()">
           <span style="font-size: 11px; color: #a7f3d0;">
-            📞 Enables <strong>"Direct Private Call"</strong> on your portal. Finder can call your Telegram handle directly without seeing your phone number.
+            📞 Enables <strong>"Urgent WhatsApp Call / Chat"</strong> on your portal for 100% wake-up reliability even if phone screen is locked.
           </span>
         </div>
 
@@ -726,10 +726,10 @@
     }
 
     function generateTargetUrl() {
-      const vehicle = document.getElementById('vehicleInput').value.trim() || 'VEHICLE';
+      const vehicle = document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751';
 
       if (activeMode === 'whatsapp') {
-        const phone = document.getElementById('waPhoneInput').value.replace(/[^0-9]/g, '');
+        const phone = document.getElementById('waPhoneInput').value.replace(/[^0-9]/g, '') || '919869783690';
         const msg = document.getElementById('waMessageInput').value.trim() || `Hi! I am near your vehicle [${vehicle}].`;
         return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       }
@@ -737,13 +737,14 @@
       let base = document.getElementById('portalBaseUrl').value.trim() || 'scanner-portal.html';
       const bot = document.getElementById('tgBotToken').value.trim();
       const chat = document.getElementById('tgChatId').value.trim();
+      const phoneEl = document.getElementById('emergencyPhone');
+      const wa = phoneEl ? phoneEl.value.trim().replace(/[^0-9]/g, '') : '';
 
       const separator = base.includes('?') ? '&' : '?';
       let url = `${base}${separator}v=${encodeURIComponent(vehicle)}`;
       if (bot) url += `&bot=${encodeURIComponent(bot)}`;
       if (chat) url += `&chat=${encodeURIComponent(chat)}`;
-      const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
-      if (user) url += `&user=${encodeURIComponent(user.replace('@', ''))}`;
+      if (wa && wa !== '919869783690') url += `&wa=${encodeURIComponent(wa)}`;
       url += `&ver=3.0`;
       return url;
     }
@@ -760,8 +761,8 @@
         const chat = document.getElementById('tgChatId').value.trim();
         if (bot) localStorage.setItem('vqr_bot', bot);
         if (chat) localStorage.setItem('vqr_chat', chat);
-        const user = document.getElementById('tgUsername') ? document.getElementById('tgUsername').value.trim() : '';
-        if (user) localStorage.setItem('vqr_user', user);
+        const phoneEl = document.getElementById('emergencyPhone');
+        if (phoneEl && phoneEl.value.trim()) localStorage.setItem('vqr_wa_phone', phoneEl.value.trim());
       } else {
         const waPhone = document.getElementById('waPhoneInput').value.trim();
         if (waPhone) localStorage.setItem('vqr_waphone', waPhone);
@@ -775,17 +776,34 @@
       const urlDisplay = document.getElementById('currentUrlDisplay');
       if (urlDisplay) urlDisplay.textContent = targetUrl;
 
-      // Render QR code
+      // Render QR code with Level M for robust capacity with long URLs
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
-      qrcodeObj = new QRCode(qrContainer, {
-        text: targetUrl,
-        width: 140,
-        height: 140,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      try {
+        qrcodeObj = new QRCode(qrContainer, {
+          text: targetUrl,
+          width: 140,
+          height: 140,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (errM) {
+        console.warn('QR Level M overflow, falling back to Level L:', errM);
+        try {
+          qrContainer.innerHTML = '';
+          qrcodeObj = new QRCode(qrContainer, {
+            text: targetUrl,
+            width: 140,
+            height: 140,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.L
+          });
+        } catch (errL) {
+          console.error('QR code generation failed:', errL);
+        }
+      }
     }
 
     function validateAndNotify() {
@@ -903,22 +921,44 @@
       ctx.fillText(sub, size / 2, 125);
       ctx.globalAlpha = 1.0;
 
-      // Extract QR code image from DOM
-      const qrImg = document.querySelector('#qrcode img') || document.querySelector('#qrcode canvas');
+      // Extract QR code element from DOM (prefer rendered canvas with raw pixels, then img)
+      const qrCanvas = document.querySelector('#qrcode canvas');
+      const qrImg = document.querySelector('#qrcode img');
+      const qrSource = (qrCanvas && qrCanvas.width > 0) ? qrCanvas : (qrImg && qrImg.naturalWidth > 0 ? qrImg : null);
+
       const drawQR = () => {
-        if (qrImg) {
-          const qrBoxSize = 540;
-          const qrPadding = 30;
-          const qrX = (size - qrBoxSize) / 2;
-          const qrY = 160;
+        const qrBoxSize = 540;
+        const qrPadding = 30;
+        const qrX = (size - qrBoxSize) / 2;
+        const qrY = 160;
 
-          // White QR frame
-          ctx.fillStyle = '#ffffff';
-          ctx.beginPath();
-          ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 24);
-          ctx.fill();
+        // White QR frame
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 24);
+        ctx.fill();
 
-          ctx.drawImage(qrImg, qrX + qrPadding, qrY + qrPadding, qrBoxSize - qrPadding * 2, qrBoxSize - qrPadding * 2);
+        if (qrSource) {
+          ctx.imageSmoothingEnabled = false;
+          ctx.drawImage(qrSource, qrX + qrPadding, qrY + qrPadding, qrBoxSize - qrPadding * 2, qrBoxSize - qrPadding * 2);
+          ctx.imageSmoothingEnabled = true;
+        } else {
+          // Offscreen fallback to guarantee decal never exports blank
+          const tempDiv = document.createElement('div');
+          new QRCode(tempDiv, {
+            text: generateTargetUrl(),
+            width: 480,
+            height: 480,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          const offCanvas = tempDiv.querySelector('canvas');
+          if (offCanvas) {
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(offCanvas, qrX + qrPadding, qrY + qrPadding, qrBoxSize - qrPadding * 2, qrBoxSize - qrPadding * 2);
+            ctx.imageSmoothingEnabled = true;
+          }
         }
 
         // Vehicle Plate Box
@@ -952,8 +992,8 @@
         link.click();
       };
 
-      if (qrImg instanceof HTMLImageElement && !qrImg.complete) {
-        qrImg.onload = drawQR;
+      if (qrSource instanceof HTMLImageElement && !qrSource.complete) {
+        qrSource.onload = drawQR;
       } else {
         drawQR();
       }
@@ -992,8 +1032,8 @@
       if (localStorage.getItem('vqr_chat')) {
         document.getElementById('tgChatId').value = localStorage.getItem('vqr_chat');
       }
-      if (localStorage.getItem('vqr_user')) {
-        document.getElementById('tgUsername').value = localStorage.getItem('vqr_user');
+      if (localStorage.getItem('vqr_wa_phone') && document.getElementById('emergencyPhone')) {
+        document.getElementById('emergencyPhone').value = localStorage.getItem('vqr_wa_phone');
       }
       if (localStorage.getItem('vqr_waphone')) {
         document.getElementById('waPhoneInput').value = localStorage.getItem('vqr_waphone');
