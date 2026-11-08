@@ -232,6 +232,132 @@
       transform: scaleX(-1);
     }
 
+    
+    /* Sanatan Dharma Theme Styling */
+    .theme-kesari {
+      background: linear-gradient(135deg, #ff6b00 0%, #ea580c 50%, #c2410c 100%);
+      color: #ffffff;
+      border: 4px solid #ffd54f;
+      box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
+    }
+    .theme-kesari .sacred-pill {
+      background: #7c2d12;
+      color: #ffd54f;
+      border: 1px solid #ffd54f;
+    }
+    .theme-kesari .plate-box {
+      background: #000000;
+      color: #ffd54f;
+      border: 2px solid #ffd54f;
+    }
+    .theme-kesari .qr-frame {
+      border: 3px solid #ffd54f;
+    }
+
+    .theme-kailash {
+      background: linear-gradient(135deg, #0a1128 0%, #0f172a 50%, #030712 100%);
+      color: #f8fafc;
+      border: 4px solid #eab308;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+    }
+    .theme-kailash .sacred-pill {
+      background: #1e293b;
+      color: #fef08a;
+      border: 1px solid #eab308;
+    }
+    .theme-kailash .plate-box {
+      background: #000000;
+      color: #fef08a;
+      border: 2px solid #eab308;
+    }
+    .theme-kailash .qr-frame {
+      border: 3px solid #eab308;
+    }
+
+    .theme-peetambari {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+      color: #7f1d1d;
+      border: 4px solid #991b1b;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+    }
+    .theme-peetambari .sacred-pill {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ffffff;
+    }
+    .theme-peetambari .plate-box {
+      background: #000000;
+      color: #ffffff;
+      border: 2px solid #991b1b;
+    }
+    .theme-peetambari .qr-frame {
+      border: 3px solid #991b1b;
+    }
+
+    .sacred-pill {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      display: inline-block;
+      text-transform: uppercase;
+      font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
+    }
+
+    .emblem-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .emblem-card {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      background: var(--panel-alt);
+    }
+    .emblem-card.active {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.15);
+      box-shadow: 0 0 0 1px #f59e0b;
+    }
+    .emblem-icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .emblem-label {
+      font-size: 10px;
+      color: var(--text);
+      font-weight: bold;
+    }
+
+    .qr-frame {
+      position: relative;
+    }
+    .qr-center-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #ffd54f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      pointer-events: none;
+    }
+
     /* Decal Color Themes */
     .theme-hsrp {
       background: #fcd34d;
@@ -599,9 +725,37 @@
         </div>
       </div>
 
+      <!-- 3. Sacred Emblem & Sanskrit Shloka -->
+      <div class="form-group">
+        <label>3. Sacred Emblem (Center QR Badge)</label>
+        <div class="emblem-picker">
+          <div class="emblem-card active" id="emb-trishul" onclick="setEmblem('trishul')">
+            <span class="emblem-icon">🔱</span>
+            <span class="emblem-label">Trishul</span>
+          </div>
+          <div class="emblem-card" id="emb-om" onclick="setEmblem('om')">
+            <span class="emblem-icon">ॐ</span>
+            <span class="emblem-label">Sacred Om</span>
+          </div>
+          <div class="emblem-card" id="emb-swastik" onclick="setEmblem('swastik')">
+            <span class="emblem-icon">卐</span>
+            <span class="emblem-label">Swastik</span>
+          </div>
+          <div class="emblem-card" id="emb-none" onclick="setEmblem('none')">
+            <span class="emblem-icon">◽</span>
+            <span class="emblem-label">None</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>4. Sanskrit Shloka / Blessing Header</label>
+        <input type="text" id="shlokaTextInput" value="॥ रक्ष रक्षेति वाहनम् • शुभम् ॥" oninput="updateSticker()">
+      </div>
+
       <!-- Mirror / Reverse Print Option -->
       <div class="form-group">
-        <label>3. Windshield Mounting Option</label>
+        <label>5. Windshield Mounting Option</label>
         <label class="switch-label">
           <input type="checkbox" id="mirrorPrintCheck" onchange="toggleMirrorPrint()">
           <span>🪞 Mirror / Reverse Print (For inside windshield glass mount)</span>
@@ -675,11 +829,43 @@
 
   <script>
     let activeMode = 'telegram';
-    let currentTheme = 'hsrp';
-    let qrcodeObj = null;
-    let isServerConfigured = false;
+    let currentTheme = 'kesari';
+    let currentEmblem = 'trishul';
 
     const THEME_COLORS = {
+      kesari: { 
+        bg: '#ea580c', 
+        bgGradient: ['#ff6b00', '#c2410c'], 
+        border: '#ffd54f', 
+        text: '#ffffff', 
+        accent: '#ffd54f',
+        shlokaBg: '#7c2d12', 
+        shlokaText: '#ffd54f', 
+        plateBg: '#000000', 
+        plateText: '#ffd54f' 
+      },
+      kailash: { 
+        bg: '#0f172a', 
+        bgGradient: ['#0a1128', '#030712'], 
+        border: '#eab308', 
+        text: '#f8fafc', 
+        accent: '#38bdf8',
+        shlokaBg: '#1e293b', 
+        shlokaText: '#fef08a', 
+        plateBg: '#000000', 
+        plateText: '#fef08a' 
+      },
+      peetambari: { 
+        bg: '#f59e0b', 
+        bgGradient: ['#fbbf24', '#d97706'], 
+        border: '#991b1b', 
+        text: '#7f1d1d', 
+        accent: '#991b1b',
+        shlokaBg: '#991b1b', 
+        shlokaText: '#ffffff', 
+        plateBg: '#000000', 
+        plateText: '#ffffff' 
+      },
       hsrp:  { bg: '#fcd34d', border: '#000000', text: '#000000', plateBg: '#000000', plateText: '#fcd34d' },
       dark:  { bg: '#0f172a', border: '#3b82f6', text: '#f8fafc', plateBg: '#3b82f6', plateText: '#ffffff' },
       white: { bg: '#ffffff', border: '#111827', text: '#111827', plateBg: '#111827', plateText: '#ffffff' },
@@ -770,6 +956,11 @@
 
       document.getElementById('previewPlate').textContent = vehicle;
       document.getElementById('previewTitle').textContent = title;
+      const shloka = document.getElementById('shlokaTextInput') ? document.getElementById('shlokaTextInput').value : '';
+      if (document.getElementById('previewShloka')) {
+        document.getElementById('previewShloka').textContent = shloka;
+        document.getElementById('previewShloka').style.display = shloka ? 'inline-block' : 'none';
+      }
       document.getElementById('previewSub').textContent = sub;
 
       const targetUrl = generateTargetUrl();
@@ -883,7 +1074,7 @@
      */
     function downloadDecalPng() {
       const canvas = document.createElement('canvas');
-      const size = 1000;
+      const size = 1200;
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext('2d');
@@ -894,100 +1085,201 @@
         ctx.scale(-1, 1);
       }
 
-      const colors = THEME_COLORS[currentTheme] || THEME_COLORS.hsrp;
+      const colors = THEME_COLORS[currentTheme] || THEME_COLORS.kesari;
 
-      // Draw rounded background
-      const radius = 40;
-      ctx.fillStyle = colors.bg;
-      ctx.strokeStyle = colors.border;
-      ctx.lineWidth = 14;
+      // Draw background (gradient if available)
+      const radius = 48;
+      if (colors.bgGradient) {
+        const grad = ctx.createLinearGradient(0, 0, size, size);
+        grad.addColorStop(0, colors.bgGradient[0]);
+        grad.addColorStop(1, colors.bgGradient[1]);
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = colors.bg;
+      }
+      ctx.strokeStyle = colors.border || '#ffd54f';
+      ctx.lineWidth = 16;
 
       ctx.beginPath();
-      ctx.roundRect(10, 10, size - 20, size - 20, radius);
+      ctx.roundRect(14, 14, size - 28, size - 28, radius);
       ctx.fill();
       ctx.stroke();
+
+      // Inner ornate border
+      ctx.strokeStyle = colors.border || '#ffd54f';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([16, 8]);
+      ctx.beginPath();
+      ctx.roundRect(36, 36, size - 72, size - 72, radius - 12);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Sacred Shloka Pill
+      const shlokaText = document.getElementById('shlokaTextInput') ? document.getElementById('shlokaTextInput').value : '॥ रक्ष रक्षेति वाहनम् • शुभम् ॥';
+      if (shlokaText) {
+        const pillW = 600, pillH = 64;
+        const pillX = (size - pillW) / 2;
+        const pillY = 58;
+        ctx.fillStyle = colors.shlokaBg || '#7c2d12';
+        ctx.strokeStyle = colors.border || '#ffd54f';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.roundRect(pillX, pillY, pillW, pillH, 32);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = colors.shlokaText || '#ffd54f';
+        ctx.font = '900 36px "Noto Sans Devanagari", "Mangal", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(shlokaText, size / 2, pillY + 45);
+      }
 
       // Header Text
       ctx.fillStyle = colors.text;
       ctx.textAlign = 'center';
-      ctx.font = '900 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.font = '900 40px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       const title = document.getElementById('headerTextInput').value || 'PARKED SMART • EMERGENCY CONTACT';
-      ctx.fillText(title, size / 2, 85);
+      ctx.fillText(title, size / 2, 165);
 
       // Subheader Text
       ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.globalAlpha = 0.85;
+      ctx.globalAlpha = 0.9;
       const sub = document.getElementById('subHeaderTextInput').value || 'SCAN QR CODE IF BLOCKING OR IN EMERGENCY';
-      ctx.fillText(sub, size / 2, 125);
+      ctx.fillText(sub, size / 2, 205);
       ctx.globalAlpha = 1.0;
 
-      // Extract QR code element from DOM (prefer rendered canvas with raw pixels, then img)
+      // Extract QR code element from DOM
       const qrCanvas = document.querySelector('#qrcode canvas');
       const qrImg = document.querySelector('#qrcode img');
       const qrSource = (qrCanvas && qrCanvas.width > 0) ? qrCanvas : (qrImg && qrImg.naturalWidth > 0 ? qrImg : null);
 
       const drawQR = () => {
-        const qrBoxSize = 540;
-        const qrPadding = 30;
+        const qrBoxSize = 620;
+        const qrPadding = 36;
         const qrX = (size - qrBoxSize) / 2;
-        const qrY = 160;
+        const qrY = 245;
 
         // White QR frame
         ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = colors.border || '#ffd54f';
+        ctx.lineWidth = 8;
         ctx.beginPath();
-        ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 24);
+        ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 36);
         ctx.fill();
+        ctx.stroke();
 
         if (qrSource) {
           ctx.imageSmoothingEnabled = false;
           ctx.drawImage(qrSource, qrX + qrPadding, qrY + qrPadding, qrBoxSize - qrPadding * 2, qrBoxSize - qrPadding * 2);
           ctx.imageSmoothingEnabled = true;
-        } else {
-          // Offscreen fallback to guarantee decal never exports blank
-          const tempDiv = document.createElement('div');
-          new QRCode(tempDiv, {
-            text: generateTargetUrl(),
-            width: 480,
-            height: 480,
-            colorDark: '#000000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.M
-          });
-          const offCanvas = tempDiv.querySelector('canvas');
-          if (offCanvas) {
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(offCanvas, qrX + qrPadding, qrY + qrPadding, qrBoxSize - qrPadding * 2, qrBoxSize - qrPadding * 2);
-            ctx.imageSmoothingEnabled = true;
+        }
+
+        // Central Sacred Emblem Badge
+        if (currentEmblem !== 'none') {
+          const badgeCenterX = size / 2;
+          const badgeCenterY = qrY + qrBoxSize / 2;
+          const badgeRadius = 65;
+
+          // Outer Badge Circle
+          ctx.fillStyle = colors.shlokaBg || '#7c2d12';
+          ctx.strokeStyle = colors.border || '#ffd54f';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.arc(badgeCenterX, badgeCenterY, badgeRadius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Inner Disc
+          ctx.fillStyle = '#fffdf5';
+          ctx.beginPath();
+          ctx.arc(badgeCenterX, badgeCenterY, badgeRadius - 8, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (currentEmblem === 'trishul') {
+            // Draw Sacred Trishul & Damru
+            ctx.fillStyle = '#b91c1c';
+            ctx.strokeStyle = '#c2410c';
+            ctx.lineWidth = 4;
+            // Shaft
+            ctx.beginPath();
+            ctx.moveTo(badgeCenterX, badgeCenterY - 32);
+            ctx.lineTo(badgeCenterX, badgeCenterY + 32);
+            ctx.stroke();
+            // Prongs
+            ctx.beginPath();
+            ctx.arc(badgeCenterX, badgeCenterY - 14, 18, 0, Math.PI, false);
+            ctx.stroke();
+            // Damru
+            ctx.beginPath();
+            ctx.moveTo(badgeCenterX - 10, badgeCenterY + 4);
+            ctx.lineTo(badgeCenterX + 10, badgeCenterY + 4);
+            ctx.lineTo(badgeCenterX - 10, badgeCenterY + 20);
+            ctx.lineTo(badgeCenterX + 10, badgeCenterY + 20);
+            ctx.closePath();
+            ctx.fill();
+          } else if (currentEmblem === 'om') {
+            ctx.fillStyle = '#b45309';
+            ctx.font = '900 64px "Noto Sans Devanagari", "Mangal", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ॐ', badgeCenterX, badgeCenterY + 22);
+          } else if (currentEmblem === 'swastik') {
+            ctx.strokeStyle = '#b91c1c';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            // Swastik paths
+            ctx.beginPath();
+            ctx.moveTo(badgeCenterX, badgeCenterY - 26);
+            ctx.lineTo(badgeCenterX, badgeCenterY + 26);
+            ctx.moveTo(badgeCenterX - 26, badgeCenterY);
+            ctx.lineTo(badgeCenterX + 26, badgeCenterY);
+            ctx.moveTo(badgeCenterX, badgeCenterY - 26);
+            ctx.lineTo(badgeCenterX + 20, badgeCenterY - 26);
+            ctx.moveTo(badgeCenterX + 26, badgeCenterY);
+            ctx.lineTo(badgeCenterX + 26, badgeCenterY + 20);
+            ctx.moveTo(badgeCenterX, badgeCenterY + 26);
+            ctx.lineTo(badgeCenterX - 20, badgeCenterY + 26);
+            ctx.moveTo(badgeCenterX - 26, badgeCenterY);
+            ctx.lineTo(badgeCenterX - 26, badgeCenterY - 20);
+            ctx.stroke();
           }
         }
 
         // Vehicle Plate Box
-        const plateWidth = 560;
-        const plateHeight = 75;
+        const plateWidth = 660;
+        const plateHeight = 90;
         const plateX = (size - plateWidth) / 2;
-        const plateY = 740;
+        const plateY = 905;
 
         ctx.fillStyle = colors.plateBg;
+        ctx.strokeStyle = colors.border || '#ffd54f';
+        ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.roundRect(plateX, plateY, plateWidth, plateHeight, 18);
+        ctx.roundRect(plateX, plateY, plateWidth, plateHeight, 20);
         ctx.fill();
+        ctx.stroke();
 
         ctx.fillStyle = colors.plateText;
-        ctx.font = '900 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.font = '900 52px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         const plateText = '🇮🇳  ' + (document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751');
-        ctx.fillText(plateText, size / 2, plateY + 54);
+        ctx.fillText(plateText, size / 2, plateY + 65);
 
         // Footer Text
         ctx.fillStyle = colors.text;
-        ctx.font = '800 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.globalAlpha = 0.9;
+        ctx.font = '800 25px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.globalAlpha = 0.95;
         const footerText = activeMode === 'whatsapp' ? '💬 WHATSAPP DIRECT CONTACT • ⚡ 1-TAP CHAT' : '🔒 100% PRIVACY PROTECTED • ⚡ INSTANT CONTACT';
-        ctx.fillText(footerText, size / 2, 930);
+        ctx.fillText(footerText, size / 2, 1045);
+
+        // Sub-footer blessing
+        ctx.fillStyle = colors.accent || '#ffd54f';
+        ctx.font = '800 24px "Noto Sans Devanagari", sans-serif';
+        const subBlessing = currentTheme === 'kesari' ? '॥ ॐ नमः शिवाय • शुभ लाभ ॥' : (currentTheme === 'kailash' ? '॥ ॐ नमः शिवाय • हर हर महादेव ॥' : '॥ शुभ लाभ • श्री गणेशाय नमः ॥');
+        ctx.fillText(subBlessing, size / 2, 1090);
 
         // Trigger file download
         const link = document.createElement('a');
         const filenamePlate = (document.getElementById('vehicleInput').value || 'vehicle').replace(/[^a-zA-Z0-9]/g, '_');
-        link.download = `decal-${filenamePlate}${isMirrored ? '-mirror' : ''}.png`;
+        link.download = `decal-${filenamePlate}-${currentTheme}${isMirrored ? '-mirror' : ''}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       };
@@ -997,6 +1289,38 @@
       } else {
         drawQR();
       }
+    }
+
+    /**
+     * Downloads infinite-resolution scalable vector SVG
+     */
+    function downloadDecalSvg() {
+      const isMirrored = document.getElementById('mirrorPrintCheck').checked;
+      const vehicle = document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751';
+      const shloka = document.getElementById('shlokaTextInput') ? document.getElementById('shlokaTextInput').value : '॥ रक्ष रक्षेति वाहनम् • शुभम् ॥';
+
+      // Pick corresponding SVG
+      let svgFileName = 'sanatan_decal_kesari_trishul.svg';
+      if (currentTheme === 'kailash') svgFileName = 'sanatan_decal_kailash_om.svg';
+      else if (currentTheme === 'peetambari') svgFileName = 'sanatan_decal_peetambari_swastik.svg';
+
+      fetch(svgFileName)
+        .then(res => res.text())
+        .then(svgText => {
+          if (isMirrored) {
+            svgText = svgText.replace('<svg ', '<svg style="transform: scaleX(-1);" ');
+          }
+          const blob = new Blob([svgText], { type: 'image/svg+xml' });
+          const link = document.createElement('a');
+          const cleanPlate = vehicle.replace(/[^a-zA-Z0-9]/g, '_');
+          link.download = `decal-${cleanPlate}-${currentTheme}${isMirrored ? '-mirror' : ''}.svg`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+        })
+        .catch(err => {
+          console.warn('Direct fetch failed, falling back to PNG', err);
+          downloadDecalPng();
+        });
     }
 
     // Auto-detect server status and restore cached settings on page load
