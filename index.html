@@ -811,11 +811,14 @@
       </div>
 
       <div class="action-row">
-        <button type="button" class="btn btn-primary" onclick="window.print()">
-          🖨️ Print Decal
-        </button>
+        <a href="vehicle_qr_decal_print_sheet.pdf" download="vehicle_qr_decal_print_sheet.pdf" class="btn btn-primary" style="background: #2563eb; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          📄 Download Print PDF (9cm × 9cm)
+        </a>
         <button type="button" class="btn btn-success" onclick="downloadDecalPng()">
           💾 Download PNG
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="downloadDecalSvg()" style="background: #ea580c; border-color: #ea580c; color: #fff;">
+          ✨ Download Vector SVG
         </button>
         <button type="button" class="btn btn-secondary" onclick="testQrScan()" id="testScanBtn">
           📱 Test Scanner
