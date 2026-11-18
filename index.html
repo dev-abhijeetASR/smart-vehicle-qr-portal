@@ -345,17 +345,24 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 38px;
-      height: 38px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid #ffd54f;
+      background: #000000;
+      border: 2.5px solid #ffd54f;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
       pointer-events: none;
+      overflow: hidden;
+    }
+    .qr-badge-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 46%;
+      border-radius: 50%;
     }
 
     /* Decal Color Themes */
@@ -731,7 +738,7 @@
         <div class="emblem-picker">
           <div class="emblem-card active" id="emb-trishul" onclick="setEmblem('trishul')">
             <span class="emblem-icon">🔱</span>
-            <span class="emblem-label">Trishul</span>
+            <span class="emblem-label">Trishul Chakra</span>
           </div>
           <div class="emblem-card" id="emb-om" onclick="setEmblem('om')">
             <span class="emblem-icon">ॐ</span>
@@ -1196,27 +1203,28 @@
           ctx.fill();
 
           if (currentEmblem === 'trishul') {
-            // Draw Sacred Trishul & Damru
-            ctx.fillStyle = '#b91c1c';
-            ctx.strokeStyle = '#c2410c';
-            ctx.lineWidth = 4;
-            // Shaft
-            ctx.beginPath();
-            ctx.moveTo(badgeCenterX, badgeCenterY - 32);
-            ctx.lineTo(badgeCenterX, badgeCenterY + 32);
-            ctx.stroke();
-            // Prongs
-            ctx.beginPath();
-            ctx.arc(badgeCenterX, badgeCenterY - 14, 18, 0, Math.PI, false);
-            ctx.stroke();
-            // Damru
-            ctx.beginPath();
-            ctx.moveTo(badgeCenterX - 10, badgeCenterY + 4);
-            ctx.lineTo(badgeCenterX + 10, badgeCenterY + 4);
-            ctx.lineTo(badgeCenterX - 10, badgeCenterY + 20);
-            ctx.lineTo(badgeCenterX + 10, badgeCenterY + 20);
-            ctx.closePath();
-            ctx.fill();
+            // Draw Authentic Mahadev Trishul & Mantra Wheel Photo
+            const trishulImg = document.getElementById('previewBadgeImg');
+            if (trishulImg && trishulImg.complete && trishulImg.naturalWidth > 0) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(badgeCenterX, badgeCenterY, badgeRadius - 6, 0, Math.PI * 2);
+              ctx.clip();
+              // Clip square around center of Trishul & Mantra Wheel (sY = 135 to 550)
+              const dRadius = badgeRadius - 6;
+              const sW = 415;
+              const sH = 415;
+              const sX = 0;
+              const sY = 135;
+              ctx.drawImage(trishulImg, sX, sY, sW, sH, badgeCenterX - dRadius, badgeCenterY - dRadius, dRadius * 2, dRadius * 2);
+              ctx.restore();
+            } else {
+              // Fallback
+              ctx.fillStyle = '#ffd54f';
+              ctx.font = '900 48px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('🔱', badgeCenterX, badgeCenterY + 16);
+            }
           } else if (currentEmblem === 'om') {
             ctx.fillStyle = '#b45309';
             ctx.font = '900 64px "Noto Sans Devanagari", "Mangal", sans-serif';
@@ -1301,8 +1309,11 @@
 
       // Pick corresponding SVG
       let svgFileName = 'sanatan_decal_kesari_trishul.svg';
-      if (currentTheme === 'kailash') svgFileName = 'sanatan_decal_kailash_om.svg';
-      else if (currentTheme === 'peetambari') svgFileName = 'sanatan_decal_peetambari_swastik.svg';
+      if (currentTheme === 'kailash') {
+        svgFileName = (currentEmblem === 'trishul') ? 'sanatan_decal_kailash_trishul.svg' : 'sanatan_decal_kailash_om.svg';
+      } else if (currentTheme === 'peetambari') {
+        svgFileName = 'sanatan_decal_peetambari_swastik.svg';
+      }
 
       fetch(svgFileName)
         .then(res => res.text())
