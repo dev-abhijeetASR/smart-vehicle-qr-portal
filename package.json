@@ -23,6 +23,8 @@
   "author": "dev-abhijeetASR",
   "license": "MIT",
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "pdfkit": "^0.20.2",
     "qrcode": "^1.5.4"
   }
 }

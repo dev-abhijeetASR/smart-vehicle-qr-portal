@@ -240,7 +240,50 @@
       border: 4px solid #ffd54f;
       box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
     }
-    .theme-kesari .sacred-pill {
+    .theme-kesari 
+    .emergency-banner {
+      font-size: 10.5px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 213, 79, 0.6);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      text-align: center;
+      width: 94%;
+      box-sizing: border-box;
+    }
+    .privacy-pill {
+      font-size: 9.5px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 213, 79, 0.5);
+      color: #ffffff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-align: center;
+      width: 92%;
+      box-sizing: border-box;
+    }
+    .mahadev-banner {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      background: rgba(255, 213, 79, 0.2);
+      border: 1.5px solid #ffd54f;
+      color: #ffd54f;
+      padding: 4px 14px;
+      border-radius: 20px;
+      text-align: center;
+      font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
+      width: 88%;
+      box-sizing: border-box;
+    }
+
+    .sacred-pill {
       background: #7c2d12;
       color: #ffd54f;
       border: 1px solid #ffd54f;
@@ -709,48 +752,25 @@
       <div class="form-group">
         <label>2. Decal Theme & Styling</label>
         <div class="theme-picker">
-          <div class="theme-card active" id="th-hsrp" onclick="setTheme('hsrp')">
+          <div class="theme-card active" id="th-kesari" onclick="setTheme('kesari')">
+            <div class="theme-swatch" style="background: linear-gradient(135deg, #ff6b00, #c2410c); border: 1px solid #ffd54f;"></div>
+            Surya Kesari
+          </div>
+          <div class="theme-card" id="th-kailash" onclick="setTheme('kailash')">
+            <div class="theme-swatch" style="background: #0f172a; border: 1px solid #eab308;"></div>
+            Kailash Mahadev
+          </div>
+          <div class="theme-card" id="th-peetambari" onclick="setTheme('peetambari')">
+            <div class="theme-swatch" style="background: linear-gradient(135deg, #fbbf24, #d97706); border: 1px solid #991b1b;"></div>
+            Peetambari
+          </div>
+          <div class="theme-card" id="th-hsrp" onclick="setTheme('hsrp')">
             <div class="theme-swatch" style="background: #fcd34d; border: 1px solid #000;"></div>
             Yellow
           </div>
           <div class="theme-card" id="th-dark" onclick="setTheme('dark')">
             <div class="theme-swatch" style="background: #0f172a; border: 1px solid #3b82f6;"></div>
             Stealth
-          </div>
-          <div class="theme-card" id="th-white" onclick="setTheme('white')">
-            <div class="theme-swatch" style="background: #ffffff; border: 1px solid #94a3b8;"></div>
-            White
-          </div>
-          <div class="theme-card" id="th-red" onclick="setTheme('red')">
-            <div class="theme-swatch" style="background: #dc2626; border: 1px solid #fff;"></div>
-            Red
-          </div>
-          <div class="theme-card" id="th-green" onclick="setTheme('green')">
-            <div class="theme-swatch" style="background: #059669; border: 1px solid #fff;"></div>
-            Green
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Sacred Emblem & Sanskrit Shloka -->
-      <div class="form-group">
-        <label>3. Sacred Emblem (Center QR Badge)</label>
-        <div class="emblem-picker">
-          <div class="emblem-card active" id="emb-trishul" onclick="setEmblem('trishul')">
-            <span class="emblem-icon">🔱</span>
-            <span class="emblem-label">Trishul Chakra</span>
-          </div>
-          <div class="emblem-card" id="emb-om" onclick="setEmblem('om')">
-            <span class="emblem-icon">ॐ</span>
-            <span class="emblem-label">Sacred Om</span>
-          </div>
-          <div class="emblem-card" id="emb-swastik" onclick="setEmblem('swastik')">
-            <span class="emblem-icon">卐</span>
-            <span class="emblem-label">Swastik</span>
-          </div>
-          <div class="emblem-card" id="emb-none" onclick="setEmblem('none')">
-            <span class="emblem-icon">◽</span>
-            <span class="emblem-label">None</span>
           </div>
         </div>
       </div>
@@ -787,28 +807,36 @@
       </div>
 
       <div class="sticker-container">
-        <div class="sticker-decal theme-hsrp" id="decalBox">
-          <div class="sticker-header">
-            <div class="sticker-title" id="previewTitle">PARKED SMART • EMERGENCY CONTACT</div>
-            <div class="sticker-sub" id="previewSub">SCAN QR CODE IF BLOCKING OR IN EMERGENCY</div>
-          </div>
+        <div class="sticker-decal theme-kesari" id="decalBox">
+          <!-- 1. TEXT 1: SANSKRIT SHLOKA (ENLARGED & BOLD) -->
+          <div class="sacred-pill" id="previewShloka">॥ रक्ष रक्षेति वाहनम् • शुभम् ॥</div>
 
+          <!-- 2. TEXT 3: SCAN QR CODE IF BLOCKING OR IN EMERGENCY (ENLARGED & HIGH VISIBILITY) -->
+          <div class="emergency-banner" id="previewSub">🚨 SCAN QR CODE IF BLOCKING OR IN EMERGENCY 🚨</div>
+
+          <!-- 3. QR FRAME WITH 3D MAHADEV TRISHUL MEDALLION -->
           <div class="qr-frame">
             <div id="qrcode"></div>
+            <div id="previewBadge" class="qr-center-badge">
+              <img id="previewBadgeImg" class="qr-badge-img" src="shiva_trishul_medallion.jpg" alt="Trishul Emblem">
+              <span id="previewBadgeText" style="display:none; font-size: 26px; font-weight: 900; color: #ffd54f;">🔱</span>
+            </div>
           </div>
 
+          <!-- 4. HIGH-CONTRAST HSRP VEHICLE REGISTRATION PLATE -->
           <div class="plate-box">
             <span id="plateCountryIcon">🇮🇳</span>
             <span id="previewPlate">MH 14 ML 3751</span>
           </div>
 
-          <div class="sticker-footer" id="previewFooter">
-            <span>🔒 100% PRIVACY PROTECTED</span>
-            <span>•</span>
-            <span>📞 CALL & VOICE ENABLED</span>
+          <!-- 5. TEXT 4: 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED (ENLARGED & BOLD) -->
+          <div class="privacy-pill" id="previewFooter">
+            <span>🔒 100% PRIVACY PROTECTED • 📞 CALL &amp; VOICE ENABLED</span>
           </div>
-        </div>
-      </div>
+
+          <!-- 6. TEXT 2: ॐ नमः शिवाय हर हर महादेव (DEDICATED PROMINENT BANNER, ENLARGED & BOLD) -->
+          <div class="mahadev-banner" id="previewMahadev">॥ ॐ नमः शिवाय • हर हर महादेव ॥</div>
+        </div></div>
 
       <div class="action-row">
         <a href="vehicle_qr_decal_print_sheet.pdf" download="vehicle_qr_decal_print_sheet.pdf" class="btn btn-primary" style="background: #2563eb; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
@@ -905,13 +933,42 @@
 
     function setTheme(theme) {
       currentTheme = theme;
-      ['hsrp', 'dark', 'white', 'red', 'green'].forEach(t => {
+      ['kesari', 'kailash', 'peetambari', 'hsrp', 'dark', 'white', 'red', 'green'].forEach(t => {
         const el = document.getElementById('th-' + t);
         if (el) el.classList.toggle('active', t === theme);
       });
       const decal = document.getElementById('decalBox');
       const isMirrored = document.getElementById('mirrorPrintCheck').checked;
       decal.className = `sticker-decal theme-${theme}${isMirrored ? ' mirrored' : ''}`;
+      updateSticker();
+    }
+
+    function setEmblem(emblem) {
+      currentEmblem = emblem;
+      ['trishul', 'om', 'swastik', 'none'].forEach(e => {
+        const el = document.getElementById('emb-' + e);
+        if (el) el.classList.toggle('active', e === emblem);
+      });
+      const badge = document.getElementById('previewBadge');
+      if (badge) {
+        if (emblem === 'none') {
+          badge.style.display = 'none';
+        } else {
+          badge.style.display = 'flex';
+          const badgeImg = document.getElementById('previewBadgeImg');
+          const badgeText = document.getElementById('previewBadgeText');
+          if (emblem === 'trishul') {
+            if (badgeImg) badgeImg.style.display = 'block';
+            if (badgeText) badgeText.style.display = 'none';
+          } else {
+            if (badgeImg) badgeImg.style.display = 'none';
+            if (badgeText) {
+              badgeText.style.display = 'block';
+              badgeText.textContent = (emblem === 'om' ? 'ॐ' : '卐');
+            }
+          }
+        }
+      }
     }
 
     function toggleMirrorPrint() {
@@ -1124,39 +1181,48 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Sacred Shloka Pill
+      // 1. TEXT 1: SANSKRIT SHLOKA (ENLARGED & BOLD)
       const shlokaText = document.getElementById('shlokaTextInput') ? document.getElementById('shlokaTextInput').value : '॥ रक्ष रक्षेति वाहनम् • शुभम् ॥';
       if (shlokaText) {
-        const pillW = 600, pillH = 64;
+        const pillW = 720, pillH = 74;
         const pillX = (size - pillW) / 2;
-        const pillY = 58;
+        const pillY = 52;
         ctx.fillStyle = colors.shlokaBg || '#7c2d12';
         ctx.strokeStyle = colors.border || '#ffd54f';
-        ctx.lineWidth = 3.5;
+        ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.roundRect(pillX, pillY, pillW, pillH, 32);
+        ctx.roundRect(pillX, pillY, pillW, pillH, 37);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = colors.shlokaText || '#ffd54f';
-        ctx.font = '900 36px "Noto Sans Devanagari", "Mangal", sans-serif';
+        ctx.font = '900 44px "Noto Sans Devanagari", "Mangal", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(shlokaText, size / 2, pillY + 45);
+        ctx.fillText(shlokaText, size / 2, pillY + 52);
       }
 
-      // Header Text
-      ctx.fillStyle = colors.text;
-      ctx.textAlign = 'center';
-      ctx.font = '900 40px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      const title = document.getElementById('headerTextInput').value || 'PARKED SMART • EMERGENCY CONTACT';
-      ctx.fillText(title, size / 2, 165);
+      // 2. TEXT 3: SCAN QR CODE IF BLOCKING OR IN EMERGENCY (ENLARGED & HIGH VISIBILITY)
+      const bannerW = 840, bannerH = 56;
+      const bannerX = (size - bannerW) / 2;
+      const bannerY = 140;
+      ctx.fillStyle = colors.shlokaBg || '#7c2d12';
+      ctx.strokeStyle = colors.border || '#ffd54f';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 14);
+      ctx.fill();
+      ctx.stroke();
 
-      // Subheader Text
-      ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.globalAlpha = 0.9;
-      const sub = document.getElementById('subHeaderTextInput').value || 'SCAN QR CODE IF BLOCKING OR IN EMERGENCY';
-      ctx.fillText(sub, size / 2, 205);
-      ctx.globalAlpha = 1.0;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 28px -apple-system, BlinkMacSystemFont, "Segoe UI Black", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      const sub = document.getElementById('subHeaderTextInput').value || '🚨 SCAN QR CODE IF BLOCKING OR IN EMERGENCY 🚨';
+      ctx.fillText(sub, size / 2, bannerY + 38);
+
+      // Subtitle Text
+      ctx.font = '800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.fillStyle = colors.accent || '#ffd54f';
+      ctx.fillText('PARKED SMART • INSTANT VEHICLE CONTACT', size / 2, 226);
 
       // Extract QR code element from DOM
       const qrCanvas = document.querySelector('#qrcode canvas');
@@ -1164,10 +1230,10 @@
       const qrSource = (qrCanvas && qrCanvas.width > 0) ? qrCanvas : (qrImg && qrImg.naturalWidth > 0 ? qrImg : null);
 
       const drawQR = () => {
-        const qrBoxSize = 620;
-        const qrPadding = 36;
+        const qrBoxSize = 580;
+        const qrPadding = 32;
         const qrX = (size - qrBoxSize) / 2;
-        const qrY = 245;
+        const qrY = 246;
 
         // White QR frame
         ctx.fillStyle = '#ffffff';
@@ -1213,7 +1279,6 @@
               ctx.beginPath();
               ctx.arc(badgeCenterX, badgeCenterY, badgeRadius - 6, 0, Math.PI * 2);
               ctx.clip();
-              // Clip square around center of Trishul & Mantra Wheel (sY = 135 to 550)
               const dRadius = badgeRadius - 6;
               const sW = 415;
               const sH = 415;
@@ -1222,7 +1287,6 @@
               ctx.drawImage(trishulImg, sX, sY, sW, sH, badgeCenterX - dRadius, badgeCenterY - dRadius, dRadius * 2, dRadius * 2);
               ctx.restore();
             } else {
-              // Fallback
               ctx.fillStyle = '#ffd54f';
               ctx.font = '900 48px sans-serif';
               ctx.textAlign = 'center';
@@ -1237,7 +1301,6 @@
             ctx.strokeStyle = '#b91c1c';
             ctx.lineWidth = 6;
             ctx.lineCap = 'round';
-            // Swastik paths
             ctx.beginPath();
             ctx.moveTo(badgeCenterX, badgeCenterY - 26);
             ctx.lineTo(badgeCenterX, badgeCenterY + 26);
@@ -1256,10 +1319,10 @@
         }
 
         // Vehicle Plate Box
-        const plateWidth = 660;
-        const plateHeight = 90;
+        const plateWidth = 680;
+        const plateHeight = 94;
         const plateX = (size - plateWidth) / 2;
-        const plateY = 905;
+        const plateY = 855;
 
         ctx.fillStyle = colors.plateBg;
         ctx.strokeStyle = colors.border || '#ffd54f';
@@ -1270,22 +1333,41 @@
         ctx.stroke();
 
         ctx.fillStyle = colors.plateText;
-        ctx.font = '900 52px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        const plateText = '🇮🇳  ' + (document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751');
+        ctx.font = '900 52px Arial, "Segoe UI Black", sans-serif';
+        const plateText = 'IND   ' + (document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751');
         ctx.fillText(plateText, size / 2, plateY + 65);
 
-        // Footer Text
-        ctx.fillStyle = colors.text;
-        ctx.font = '800 25px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        ctx.globalAlpha = 0.95;
-        const footerText = activeMode === 'whatsapp' ? '💬 WHATSAPP DIRECT CONTACT • ⚡ 1-TAP CHAT' : '🔒 100% PRIVACY PROTECTED • ⚡ INSTANT CONTACT';
-        ctx.fillText(footerText, size / 2, 1045);
+        // 3. TEXT 4: 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED (ENLARGED & BOLD)
+        const privW = 780, privH = 54;
+        const privX = (size - privW) / 2;
+        const privY = 970;
+        ctx.fillStyle = colors.shlokaBg || '#7c2d12';
+        ctx.strokeStyle = colors.border || '#ffd54f';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(privX, privY, privW, privH, 27);
+        ctx.fill();
+        ctx.stroke();
 
-        // Sub-footer blessing
-        ctx.fillStyle = colors.accent || '#ffd54f';
-        ctx.font = '800 24px "Noto Sans Devanagari", sans-serif';
-        const subBlessing = currentTheme === 'kesari' ? '॥ ॐ नमः शिवाय • शुभ लाभ ॥' : (currentTheme === 'kailash' ? '॥ ॐ नमः शिवाय • हर हर महादेव ॥' : '॥ शुभ लाभ • श्री गणेशाय नमः ॥');
-        ctx.fillText(subBlessing, size / 2, 1090);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI Black", Roboto, sans-serif';
+        ctx.fillText('🔒 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED', size / 2, privY + 36);
+
+        // 4. TEXT 2: ॐ नमः शिवाय हर हर महादेव (DEDICATED PROMINENT BANNER, ENLARGED & BOLD)
+        const mahaW = 660, mahaH = 50;
+        const mahaX = (size - mahaW) / 2;
+        const mahaY = 1045;
+        ctx.fillStyle = colors.border || '#ffd54f';
+        ctx.strokeStyle = colors.shlokaBg || '#7c2d12';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.roundRect(mahaX, mahaY, mahaW, mahaH, 25);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = colors.shlokaBg || '#7c2d12';
+        ctx.font = '900 30px "Noto Sans Devanagari", "Mangal", sans-serif';
+        ctx.fillText('॥ ॐ नमः शिवाय • हर हर महादेव ॥', size / 2, mahaY + 36);
 
         // Trigger file download
         const link = document.createElement('a');
@@ -1302,9 +1384,6 @@
       }
     }
 
-    /**
-     * Downloads infinite-resolution scalable vector SVG
-     */
     function downloadDecalSvg() {
       const isMirrored = document.getElementById('mirrorPrintCheck').checked;
       const vehicle = document.getElementById('vehicleInput').value.trim() || 'MH 14 ML 3751';
