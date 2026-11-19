@@ -34,20 +34,35 @@
   <rect x="32" y="32" width="736" height="856" rx="28" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="12 6" opacity="0.85"/>
   <rect x="40" y="40" width="720" height="840" rx="22" fill="none" stroke="#7c2d12" stroke-width="1.5" opacity="0.6"/>
 
-  <!-- Corner Motifs -->
-  <g fill="#ffd54f" opacity="0.9">
+    <!-- Corner 8-Point Vedic Star Motifs (Full Clearance & Maximum Visibility) -->
+  <g fill="#ffd54f" opacity="0.95">
+    <!-- Top-Left Star (Center: 76, 76) -->
     <path d="M 48 76 Q 72 71 76 48 Q 80 71 104 76 Q 80 81 76 104 Q 72 81 48 76 Z" />
-    <circle cx="76" cy="76" r="4.5" fill="#c2410c" />
+    <path d="M 56 56 Q 76 68 96 56 Q 84 76 96 96 Q 76 84 56 96 Q 68 76 56 56 Z" opacity="0.8" />
+    <circle cx="76" cy="76" r="5" fill="#c2410c" stroke="#ffd54f" stroke-width="1.2" />
+    <circle cx="76" cy="76" r="2.2" fill="#ffd54f" />
+
+    <!-- Top-Right Star (Center: 724, 76) -->
     <path d="M 752 76 Q 728 71 724 48 Q 720 71 696 76 Q 720 81 724 104 Q 728 81 752 76 Z" />
-    <circle cx="724" cy="76" r="4.5" fill="#c2410c" />
+    <path d="M 744 56 Q 724 68 704 56 Q 716 76 704 96 Q 724 84 744 96 Q 732 76 744 56 Z" opacity="0.8" />
+    <circle cx="724" cy="76" r="5" fill="#c2410c" stroke="#ffd54f" stroke-width="1.2" />
+    <circle cx="724" cy="76" r="2.2" fill="#ffd54f" />
+
+    <!-- Bottom-Left Star (Center: 76, 844) -->
     <path d="M 48 844 Q 72 839 76 816 Q 80 839 104 844 Q 80 849 76 872 Q 72 849 48 844 Z" />
-    <circle cx="76" cy="844" r="4.5" fill="#c2410c" />
+    <path d="M 56 824 Q 76 836 96 824 Q 84 844 96 864 Q 76 852 56 864 Q 68 844 56 824 Z" opacity="0.8" />
+    <circle cx="76" cy="844" r="5" fill="#c2410c" stroke="#ffd54f" stroke-width="1.2" />
+    <circle cx="76" cy="844" r="2.2" fill="#ffd54f" />
+
+    <!-- Bottom-Right Star (Center: 724, 844) -->
     <path d="M 752 844 Q 728 839 724 816 Q 720 839 696 844 Q 720 849 724 872 Q 728 849 752 844 Z" />
-    <circle cx="724" cy="844" r="4.5" fill="#c2410c" />
+    <path d="M 744 824 Q 724 836 704 824 Q 716 844 704 864 Q 724 852 744 864 Q 732 844 744 824 Z" opacity="0.8" />
+    <circle cx="724" cy="844" r="5" fill="#c2410c" stroke="#ffd54f" stroke-width="1.2" />
+    <circle cx="724" cy="844" r="2.2" fill="#ffd54f" />
   </g>
 
   <!-- 1. TEXT 1: SANSKRIT SHLOKA (36px • BOLD 900) -->
-  <rect x="80" y="42" width="640" height="62" rx="31" fill="#7c2d12" stroke="url(#goldGrad)" stroke-width="3" filter="url(#shadowK)"/>
+  <rect x="140" y="42" width="520" height="62" rx="31" fill="#7c2d12" stroke="url(#goldGrad)" stroke-width="3" filter="url(#shadowK)"/>
   <text x="400" y="85" fill="url(#goldText)" font-family="'Noto Sans Devanagari', 'Mangal', 'Segoe UI', Arial, sans-serif" font-size="36" font-weight="900" text-anchor="middle" letter-spacing="1.2">
     ॥ रक्ष रक्षेति वाहनम् • शुभम् ॥
   </text>
@@ -1887,7 +1902,7 @@
 
   <!-- 4. TEXT 2: ॐ नमः शिवाय हर हर महादेव (MATCHING 36px • BOLD 900) -->
   <g transform="translate(400, 856)">
-    <rect x="-330" y="-31" width="660" height="62" rx="31" fill="#ffd54f" stroke="#7c2d12" stroke-width="3" filter="url(#shadowK)"/>
+    <rect x="-270" y="-31" width="540" height="62" rx="31" fill="#ffd54f" stroke="#7c2d12" stroke-width="3" filter="url(#shadowK)"/>
     <text x="0" y="11" fill="#7c2d12" font-family="'Noto Sans Devanagari', 'Mangal', 'Segoe UI', Arial, sans-serif" font-size="36" font-weight="900" text-anchor="middle" letter-spacing="1">
       ॥ ॐ नमः शिवाय • हर हर महादेव ॥
     </text>

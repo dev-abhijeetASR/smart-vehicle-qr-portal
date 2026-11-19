@@ -290,7 +290,7 @@
       border-radius: 20px;
       text-align: center;
       font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
-      width: 92%;
+      width: 82%;
       box-sizing: border-box;
     }
 
@@ -1270,7 +1270,7 @@
       // 1. TEXT 1: SANSKRIT SHLOKA (ENLARGED & BOLD)
       const shlokaText = document.getElementById('shlokaTextInput') ? document.getElementById('shlokaTextInput').value : '॥ रक्ष रक्षेति वाहनम् • शुभम् ॥';
       if (shlokaText) {
-        const pillW = 720, pillH = 74;
+        const pillW = 560, pillH = 74;
         const pillX = (size - pillW) / 2;
         const pillY = 52;
         ctx.fillStyle = colors.shlokaBg || '#7c2d12';
@@ -1440,7 +1440,7 @@
         ctx.fillText('🔒 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED', size / 2, privY + 36);
 
         // 4. TEXT 2: ॐ नमः शिवाय हर हर महादेव (MATCHING TOP SHLOKA FONT SIZE: 42px)
-        const mahaW = 740, mahaH = 74;
+        const mahaW = 600, mahaH = 74;
         const mahaX = (size - mahaW) / 2;
         const mahaY = 1040;
         ctx.fillStyle = colors.border || '#ffd54f';
