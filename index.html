@@ -241,6 +241,17 @@
       box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
     }
     .theme-kesari 
+    
+    .decal-subtitle {
+      font-size: 8.5px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 1px 0;
+      color: #fff8e1;
+    }
+  
     .emergency-banner {
       font-size: 10.5px;
       font-weight: 900;
@@ -750,27 +761,56 @@
 
       <!-- Decal Theme & Visibility -->
       <div class="form-group">
-        <label>2. Decal Theme & Styling</label>
-        <div class="theme-picker">
-          <div class="theme-card active" id="th-kesari" onclick="setTheme('kesari')">
-            <div class="theme-swatch" style="background: linear-gradient(135deg, #ff6b00, #c2410c); border: 1px solid #ffd54f;"></div>
-            Surya Kesari
+        <label>2. Decal Theme &amp; Styling (Select Aesthetic)</label>
+        <div class="theme-picker" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 8px;">
+          <div class="theme-card active" id="th-kesari" onclick="setTheme('kesari')" style="border-color: #ffd54f; background: rgba(234, 88, 12, 0.15);">
+            <div class="theme-swatch" style="background: linear-gradient(135deg, #ff6b00, #c2410c); border: 1.5px solid #ffd54f;"></div>
+            <div style="font-weight: 900; color: #fbbf24;">🌅 Surya Kesari</div>
+            <div style="font-size: 9px; color: #cbd5e1; margin-top: 2px;">Royal Saffron Gold</div>
           </div>
-          <div class="theme-card" id="th-kailash" onclick="setTheme('kailash')">
-            <div class="theme-swatch" style="background: #0f172a; border: 1px solid #eab308;"></div>
-            Kailash Mahadev
+          <div class="theme-card" id="th-kailash" onclick="setTheme('kailash')" style="border-color: #38bdf8; background: rgba(15, 23, 42, 0.5);">
+            <div class="theme-swatch" style="background: linear-gradient(135deg, #0a1128, #0f172a); border: 1.5px solid #eab308;"></div>
+            <div style="font-weight: 900; color: #38bdf8;">🏔️ Kailash Mahadev</div>
+            <div style="font-size: 9px; color: #cbd5e1; margin-top: 2px;">Deep Midnight Gold</div>
           </div>
-          <div class="theme-card" id="th-peetambari" onclick="setTheme('peetambari')">
-            <div class="theme-swatch" style="background: linear-gradient(135deg, #fbbf24, #d97706); border: 1px solid #991b1b;"></div>
-            Peetambari
+          <div class="theme-card" id="th-peetambari" onclick="setTheme('peetambari')" style="border-color: #991b1b; background: rgba(245, 158, 11, 0.15);">
+            <div class="theme-swatch" style="background: linear-gradient(135deg, #fbbf24, #d97706); border: 1.5px solid #991b1b;"></div>
+            <div style="font-weight: 900; color: #f59e0b;">🪔 Vedic Peetambari</div>
+            <div style="font-size: 9px; color: #cbd5e1; margin-top: 2px;">Sacred Kumkum Gold</div>
           </div>
+        </div>
+        <!-- Standard Utility Themes -->
+        <div class="theme-picker" style="grid-template-columns: repeat(2, 1fr);">
           <div class="theme-card" id="th-hsrp" onclick="setTheme('hsrp')">
             <div class="theme-swatch" style="background: #fcd34d; border: 1px solid #000;"></div>
-            Yellow
+            Yellow HSRP
           </div>
           <div class="theme-card" id="th-dark" onclick="setTheme('dark')">
             <div class="theme-swatch" style="background: #0f172a; border: 1px solid #3b82f6;"></div>
-            Stealth
+            Stealth Dark
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Sacred Emblem (Center QR Badge) -->
+      <div class="form-group">
+        <label>3. Sacred Emblem (Center QR Badge)</label>
+        <div class="emblem-picker">
+          <div class="emblem-card active" id="emb-trishul" onclick="setEmblem('trishul')">
+            <span class="emblem-icon">🔱</span>
+            <span class="emblem-label">Trishul Chakra</span>
+          </div>
+          <div class="emblem-card" id="emb-om" onclick="setEmblem('om')">
+            <span class="emblem-icon">ॐ</span>
+            <span class="emblem-label">Sacred Om</span>
+          </div>
+          <div class="emblem-card" id="emb-swastik" onclick="setEmblem('swastik')">
+            <span class="emblem-icon">卐</span>
+            <span class="emblem-label">Swastik</span>
+          </div>
+          <div class="emblem-card" id="emb-none" onclick="setEmblem('none')">
+            <span class="emblem-icon">◽</span>
+            <span class="emblem-label">None</span>
           </div>
         </div>
       </div>
@@ -808,11 +848,14 @@
 
       <div class="sticker-container">
         <div class="sticker-decal theme-kesari" id="decalBox">
-          <!-- 1. TEXT 1: SANSKRIT SHLOKA (ENLARGED & BOLD) -->
+          <!-- 1. SANSKRIT SHLOKA (36px • BOLD 900) -->
           <div class="sacred-pill" id="previewShloka">॥ रक्ष रक्षेति वाहनम् • शुभम् ॥</div>
 
-          <!-- 2. TEXT 3: SCAN QR CODE IF BLOCKING OR IN EMERGENCY (ENLARGED & HIGH VISIBILITY) -->
+          <!-- 2. EMERGENCY INSTRUCTION BANNER (23px • BOLD 900) -->
           <div class="emergency-banner" id="previewSub">🚨 SCAN QR CODE IF BLOCKING OR IN EMERGENCY 🚨</div>
+
+          <!-- SUBTITLE -->
+          <div class="decal-subtitle" id="previewSubtitle">PARKED SMART • INSTANT VEHICLE CONTACT</div>
 
           <!-- 3. QR FRAME WITH 3D MAHADEV TRISHUL MEDALLION -->
           <div class="qr-frame">
@@ -829,12 +872,12 @@
             <span id="previewPlate">MH 14 ML 3751</span>
           </div>
 
-          <!-- 5. TEXT 4: 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED (ENLARGED & BOLD) -->
+          <!-- 5. 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED (19px • BOLD 900) -->
           <div class="privacy-pill" id="previewFooter">
             <span>🔒 100% PRIVACY PROTECTED • 📞 CALL &amp; VOICE ENABLED</span>
           </div>
 
-          <!-- 6. TEXT 2: ॐ नमः शिवाय हर हर महादेव (DEDICATED PROMINENT BANNER, ENLARGED & BOLD) -->
+          <!-- 6. MAHADEV SHLOKA (36px • BOLD 900 • EXACT MATCH TO TOP SHLOKA) -->
           <div class="mahadev-banner" id="previewMahadev">॥ ॐ नमः शिवाय • हर हर महादेव ॥</div>
         </div>
       </div>
@@ -934,14 +977,56 @@
 
     function setTheme(theme) {
       currentTheme = theme;
-      ['kesari', 'kailash', 'peetambari', 'hsrp', 'dark', 'white', 'red', 'green'].forEach(t => {
+      ['kesari', 'kailash', 'peetambari', 'hsrp', 'dark'].forEach(t => {
         const el = document.getElementById('th-' + t);
         if (el) el.classList.toggle('active', t === theme);
       });
       const decal = document.getElementById('decalBox');
       const isMirrored = document.getElementById('mirrorPrintCheck').checked;
       decal.className = `sticker-decal theme-${theme}${isMirrored ? ' mirrored' : ''}`;
-      updateSticker();
+      
+      const colors = THEME_COLORS[theme] || THEME_COLORS.kesari;
+      const shlokaEl = document.getElementById('previewShloka');
+      if (shlokaEl) {
+        shlokaEl.style.background = colors.shlokaBg || '#7c2d12';
+        shlokaEl.style.color = colors.shlokaText || '#ffd54f';
+        shlokaEl.style.borderColor = colors.border || '#ffd54f';
+      }
+      const mahadevEl = document.getElementById('previewMahadev');
+      if (mahadevEl) {
+        if (theme === 'kailash') {
+          mahadevEl.style.background = '#1e293b';
+          mahadevEl.style.color = '#fef08a';
+          mahadevEl.style.borderColor = '#eab308';
+        } else if (theme === 'peetambari') {
+          mahadevEl.style.background = '#ffd54f';
+          mahadevEl.style.color = '#7f1d1d';
+          mahadevEl.style.borderColor = '#991b1b';
+        } else {
+          mahadevEl.style.background = '#ffd54f';
+          mahadevEl.style.color = '#7c2d12';
+          mahadevEl.style.borderColor = '#7c2d12';
+        }
+      }
+      const subEl = document.getElementById('previewSub');
+      if (subEl) {
+        subEl.style.background = colors.shlokaBg || '#7c2d12';
+        subEl.style.borderColor = colors.border || '#ffd54f';
+      }
+      const subtitleEl = document.getElementById('previewSubtitle');
+      if (subtitleEl) {
+        subtitleEl.style.color = colors.accent || '#ffd54f';
+      }
+      const privacyEl = document.getElementById('previewFooter');
+      if (privacyEl) {
+        privacyEl.style.background = colors.shlokaBg || '#7c2d12';
+        privacyEl.style.borderColor = colors.border || '#ffd54f';
+      }
+      const plateEl = document.querySelector('.plate-box');
+      if (plateEl) {
+        plateEl.style.color = colors.plateText || '#ffd54f';
+        plateEl.style.borderColor = colors.border || '#ffd54f';
+      }
     }
 
     function setEmblem(emblem) {
