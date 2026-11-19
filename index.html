@@ -269,17 +269,17 @@
       box-sizing: border-box;
     }
     .mahadev-banner {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 900;
       letter-spacing: 0.8px;
-      background: rgba(255, 213, 79, 0.2);
-      border: 1.5px solid #ffd54f;
-      color: #ffd54f;
-      padding: 4px 14px;
+      background: #ffd54f;
+      border: 1.5px solid #7c2d12;
+      color: #7c2d12;
+      padding: 5px 14px;
       border-radius: 20px;
       text-align: center;
       font-family: 'Noto Sans Devanagari', 'Mangal', sans-serif;
-      width: 88%;
+      width: 92%;
       box-sizing: border-box;
     }
 
@@ -1220,8 +1220,8 @@
       const sub = document.getElementById('subHeaderTextInput').value || '🚨 SCAN QR CODE IF BLOCKING OR IN EMERGENCY 🚨';
       ctx.fillText(sub, size / 2, bannerY + 38);
 
-      // Subtitle Text
-      ctx.font = '800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      // Subtitle Text (Enlarged & Ultra-Bold)
+      ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI Black", Roboto, sans-serif';
       ctx.fillStyle = colors.accent || '#ffd54f';
       ctx.fillText('PARKED SMART • INSTANT VEHICLE CONTACT', size / 2, 226);
 
@@ -1354,21 +1354,21 @@
         ctx.font = '900 24px -apple-system, BlinkMacSystemFont, "Segoe UI Black", Roboto, sans-serif';
         ctx.fillText('🔒 100% PRIVACY PROTECTED • 📞 CALL & VOICE ENABLED', size / 2, privY + 36);
 
-        // 4. TEXT 2: ॐ नमः शिवाय हर हर महादेव (DEDICATED PROMINENT BANNER, ENLARGED & BOLD)
-        const mahaW = 660, mahaH = 50;
+        // 4. TEXT 2: ॐ नमः शिवाय हर हर महादेव (MATCHING TOP SHLOKA FONT SIZE: 42px)
+        const mahaW = 740, mahaH = 74;
         const mahaX = (size - mahaW) / 2;
-        const mahaY = 1045;
+        const mahaY = 1040;
         ctx.fillStyle = colors.border || '#ffd54f';
         ctx.strokeStyle = colors.shlokaBg || '#7c2d12';
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.roundRect(mahaX, mahaY, mahaW, mahaH, 25);
+        ctx.roundRect(mahaX, mahaY, mahaW, mahaH, 37);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = colors.shlokaBg || '#7c2d12';
-        ctx.font = '900 30px "Noto Sans Devanagari", "Mangal", sans-serif';
-        ctx.fillText('॥ ॐ नमः शिवाय • हर हर महादेव ॥', size / 2, mahaY + 36);
+        ctx.font = '900 42px "Noto Sans Devanagari", "Mangal", sans-serif';
+        ctx.fillText('॥ ॐ नमः शिवाय • हर हर महादेव ॥', size / 2, mahaY + 52);
 
         // Trigger file download
         const link = document.createElement('a');
