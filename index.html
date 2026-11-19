@@ -836,11 +836,12 @@
 
           <!-- 6. TEXT 2: ॐ नमः शिवाय हर हर महादेव (DEDICATED PROMINENT BANNER, ENLARGED & BOLD) -->
           <div class="mahadev-banner" id="previewMahadev">॥ ॐ नमः शिवाय • हर हर महादेव ॥</div>
-        </div></div>
+        </div>
+      </div>
 
       <div class="action-row">
-        <a href="vehicle_qr_decal_print_sheet.pdf" download="vehicle_qr_decal_print_sheet.pdf" class="btn btn-primary" style="background: #2563eb; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-          📄 Download Print PDF (9cm × 9cm)
+        <a href="sanatan_vehicle_decal_print_sheet.pdf" download="sanatan_vehicle_decal_print_sheet.pdf" class="btn btn-primary" style="background: #2563eb; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+          📄 Download Print PDF (4 Decals • 9cm & 9.5cm)
         </a>
         <button type="button" class="btn btn-success" onclick="downloadDecalPng()">
           💾 Download PNG
@@ -1394,7 +1395,7 @@
       if (currentTheme === 'kailash') {
         svgFileName = (currentEmblem === 'trishul') ? 'sanatan_decal_kailash_trishul.svg' : 'sanatan_decal_kailash_om.svg';
       } else if (currentTheme === 'peetambari') {
-        svgFileName = 'sanatan_decal_peetambari_swastik.svg';
+        svgFileName = (currentEmblem === 'trishul') ? 'sanatan_decal_peetambari_trishul.svg' : 'sanatan_decal_peetambari_swastik.svg';
       }
 
       fetch(svgFileName)
